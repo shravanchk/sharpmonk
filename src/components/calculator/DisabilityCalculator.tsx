@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RangeField, SelectField } from "./Fields";
 import MoneyResultPanel from "./MoneyResultPanel";
 import AdSlot from "@/components/AdSlot";
+import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import { estimateDisabilityInsurance, type DisabilityInputs, type OccupationClass } from "@/lib/insuranceExtras";
 
 const currency = (v: number) => `$${v.toLocaleString()}`;
@@ -16,8 +17,18 @@ const DEFAULTS: DisabilityInputs = {
   occupationClass: "office",
 };
 
+// Mirrors the controls below, so a shared link can only ever carry a value the
+// UI itself could have produced.
+const SCHEMA: Schema<DisabilityInputs> = {
+  age: { kind: "number", min: 18, max: 65, step: 1 },
+  monthlyIncome: { kind: "number", min: 1000, max: 30000, step: 250 },
+  targetReplacementPct: { kind: "number", min: 40, max: 80, step: 1 },
+  employerCoveragePct: { kind: "number", min: 0, max: 70, step: 1 },
+  occupationClass: { kind: "enum", values: ["office", "field", "manual"] },
+};
+
 export default function DisabilityCalculator() {
-  const [inputs, setInputs] = useState(DEFAULTS);
+  const [inputs, setInputs] = useShareableInputs(DEFAULTS, SCHEMA);
   const result = useMemo(() => estimateDisabilityInsurance(inputs), [inputs]);
 
   return (

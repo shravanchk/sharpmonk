@@ -30,6 +30,9 @@ const COLOR: Record<IconName, string> = {
   book: "violet",
   info: "blue",
   mail: "rose",
+  link: "blue",
+  printer: "indigo",
+  search: "blue",
 };
 
 type Props = {

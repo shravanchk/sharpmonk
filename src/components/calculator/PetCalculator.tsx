@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RangeField, SelectField } from "./Fields";
 import MoneyResultPanel from "./MoneyResultPanel";
 import AdSlot from "@/components/AdSlot";
+import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import {
   estimatePetInsurance,
   type BreedSize,
@@ -23,8 +24,19 @@ const DEFAULTS: PetInputs = {
   reimbursement: 80,
 };
 
+// Mirrors the controls below, so a shared link can only ever carry a value the
+// UI itself could have produced.
+const SCHEMA: Schema<PetInputs> = {
+  species: { kind: "enum", values: ["dog", "cat"] },
+  ageYears: { kind: "number", min: 0, max: 15, step: 1 },
+  breedSize: { kind: "enum", values: ["small", "medium", "large"] },
+  coverageLevel: { kind: "enum", values: ["accident-only", "accident-illness", "comprehensive-wellness"] },
+  deductible: { kind: "numEnum", values: [100, 250, 500] },
+  reimbursement: { kind: "numEnum", values: [70, 80, 90] },
+};
+
 export default function PetCalculator() {
-  const [inputs, setInputs] = useState(DEFAULTS);
+  const [inputs, setInputs] = useShareableInputs(DEFAULTS, SCHEMA);
   const result = useMemo(() => estimatePetInsurance(inputs), [inputs]);
 
   return (

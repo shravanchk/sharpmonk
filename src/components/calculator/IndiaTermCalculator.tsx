@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RangeField, SelectField, ToggleField } from "./Fields";
 import ResultPanel from "./ResultPanel";
 import AdSlot from "@/components/AdSlot";
+import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import { estimateIndiaTermLife, inr, inrShort, type IndiaTermInputs } from "@/lib/insuranceIndia";
 
 const DEFAULTS: IndiaTermInputs = {
@@ -13,8 +14,17 @@ const DEFAULTS: IndiaTermInputs = {
   term: 30,
 };
 
+// Mirrors the controls below, so a shared link can only ever carry a value the
+// UI itself could have produced.
+const SCHEMA: Schema<IndiaTermInputs> = {
+  age: { kind: "number", min: 18, max: 65, step: 1 },
+  smoker: { kind: "bool" },
+  sumAssured: { kind: "number", min: 2500000, max: 50000000, step: 2500000 },
+  term: { kind: "numEnum", values: [10, 15, 20, 30, 40] },
+};
+
 export default function IndiaTermCalculator() {
-  const [inputs, setInputs] = useState(DEFAULTS);
+  const [inputs, setInputs] = useShareableInputs(DEFAULTS, SCHEMA);
   const result = useMemo(() => estimateIndiaTermLife(inputs), [inputs]);
 
   return (

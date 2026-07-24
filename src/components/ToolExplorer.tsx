@@ -3,17 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import IconBadge from "@/components/IconBadge";
-import Icon, { type IconName } from "@/components/Icon";
+import Icon from "@/components/Icon";
+import { TOOLS, type Cat } from "@/lib/content";
 
-type Cat = "life" | "health" | "autohome" | "other" | "india";
 
-type Tool = {
-  href: string;
-  icon: IconName;
-  title: string;
-  body: string;
-  cats: Cat[];
-};
 
 const TABS: { id: "all" | Cat; label: string }[] = [
   { id: "all", label: "All" },
@@ -24,18 +17,6 @@ const TABS: { id: "all" | Cat; label: string }[] = [
   { id: "india", label: "India" },
 ];
 
-const TOOLS: Tool[] = [
-  { href: "/calculator", icon: "shield", title: "Premium estimator", body: "Life, health, auto & home premiums in one tabbed tool.", cats: ["life", "health", "autohome"] },
-  { href: "/calculators/life-insurance-needs", icon: "clipboard", title: "Life insurance needs", body: "How much cover your family needs, via the DIME method.", cats: ["life"] },
-  { href: "/calculators/term-vs-whole-life", icon: "scale", title: "Term vs. whole life", body: "Cost and cash-value comparison for the same coverage.", cats: ["life"] },
-  { href: "/calculators/disability-insurance", icon: "briefcase", title: "Disability insurance", body: "Find your income-replacement gap and the cost to close it.", cats: ["other"] },
-  { href: "/calculators/renters-insurance", icon: "key", title: "Renters insurance", body: "Monthly cost from belongings, liability, and deductible.", cats: ["autohome"] },
-  { href: "/calculators/umbrella-insurance", icon: "umbrella", title: "Umbrella insurance", body: "Extra liability cover above your auto and home limits.", cats: ["other"] },
-  { href: "/calculators/pet-insurance", icon: "paw", title: "Pet insurance", body: "Premiums for dogs and cats by age, breed, and plan.", cats: ["other"] },
-  { href: "/in/term-life", icon: "shield", title: "Term life (India, ₹)", body: "Term cover premium in rupees by sum assured and age.", cats: ["india", "life"] },
-  { href: "/in/health-insurance", icon: "heart-pulse", title: "Health / mediclaim (India, ₹)", body: "Individual or family-floater premium by sum insured.", cats: ["india", "health"] },
-  { href: "/in/car-bike-insurance", icon: "car", title: "Car & bike (India, ₹)", body: "Own-damage + third-party + GST with No-Claim Bonus.", cats: ["india", "autohome"] },
-];
 
 export default function ToolExplorer() {
   const [tab, setTab] = useState<"all" | Cat>("all");

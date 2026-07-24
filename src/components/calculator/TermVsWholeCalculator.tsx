@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RangeField, SelectField, ToggleField } from "./Fields";
 import GrowthChart from "./GrowthChart";
 import AdSlot from "@/components/AdSlot";
+import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import { useCountUp } from "@/hooks/useCountUp";
 import { compareTermVsWholeLife, type TermVsWholeInputs } from "@/lib/insuranceExtras";
 import type { HealthRating, TermYears } from "@/lib/insuranceMath";
@@ -20,8 +21,19 @@ const DEFAULTS: TermVsWholeInputs = {
   investmentReturnPct: 7,
 };
 
+// Mirrors the controls below, so a shared link can only ever carry a value the
+// UI itself could have produced.
+const SCHEMA: Schema<TermVsWholeInputs> = {
+  age: { kind: "number", min: 18, max: 65, step: 1 },
+  smoker: { kind: "bool" },
+  healthRating: { kind: "enum", values: ["excellent", "good", "fair", "poor"] },
+  coverageAmount: { kind: "number", min: 50000, max: 2000000, step: 25000 },
+  term: { kind: "numEnum", values: [10, 20, 30] },
+  investmentReturnPct: { kind: "number", min: 2, max: 12, step: 0.5 },
+};
+
 export default function TermVsWholeCalculator() {
-  const [inputs, setInputs] = useState(DEFAULTS);
+  const [inputs, setInputs] = useShareableInputs(DEFAULTS, SCHEMA);
   const result = useMemo(() => compareTermVsWholeLife(inputs), [inputs]);
 
   const termMonthly = useCountUp(result.termMonthlyPremium);

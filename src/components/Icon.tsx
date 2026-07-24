@@ -28,7 +28,10 @@ export type IconName =
   | "globe"
   | "book"
   | "info"
-  | "mail";
+  | "mail"
+  | "link"
+  | "printer"
+  | "search";
 
 const PATHS: Record<IconName, React.ReactNode> = {
   shield: <path d="M12 3 5 6v5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z" />,
@@ -132,6 +135,25 @@ const PATHS: Record<IconName, React.ReactNode> = {
     <>
       <rect x="3.5" y="5.5" width="17" height="13" rx="2.5" />
       <path d="m4.5 8.2 6.3 4.4a2 2 0 0 0 2.4 0l6.3-4.4" />
+    </>
+  ),
+  link: (
+    <>
+      <path d="M10.5 13.5a4 4 0 0 0 5.7 0l2.8-2.8a4 4 0 0 0-5.7-5.7l-1.4 1.4" />
+      <path d="M13.5 10.5a4 4 0 0 0-5.7 0L5 13.3a4 4 0 0 0 5.7 5.7l1.4-1.4" />
+    </>
+  ),
+  printer: (
+    <>
+      <path d="M7 9V4.5h10V9" />
+      <path d="M7 17.5H5.5A1.5 1.5 0 0 1 4 16v-5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a1.5 1.5 0 0 1-1.5 1.5H17" />
+      <rect x="7" y="14" width="10" height="5.5" rx="1" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="m15.8 15.8 3.7 3.7" />
     </>
   ),
 };

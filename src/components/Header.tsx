@@ -7,6 +7,7 @@ import ThemeToggle from "./ThemeToggle";
 import RegionSwitch from "./RegionSwitch";
 import MonkMark from "./MonkMark";
 import Icon, { type IconName } from "./Icon";
+import SiteSearch from "./SiteSearch";
 
 type NavLink = { href: string; label: string; icon: IconName; hint: string };
 
@@ -27,6 +28,7 @@ const isActive = (pathname: string, href: string) =>
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(
     () => typeof window !== "undefined" && window.scrollY > 8,
   );
@@ -119,11 +121,24 @@ export default function Header() {
             <div className="hidden lg:block">
               <RegionSwitch />
             </div>
+
+            <button
+              type="button"
+              aria-label="Search"
+              aria-expanded={searchOpen}
+              onClick={() => setSearchOpen((v) => !v)}
+              className="hidden size-9 shrink-0 items-center justify-center rounded-full border border-[var(--line-strong)] bg-[var(--surface-1)] transition-colors hover:bg-[var(--surface-2)] lg:flex"
+            >
+              <Icon name={searchOpen ? "check" : "search"} size={16} />
+            </button>
+
             <ThemeToggle />
 
+            {/* Only from xl: at lg the nav, region switch and search already
+                fill the bar, and adding this back clipped it. */}
             <Link
               href="/calculators"
-              className="btn-glow hidden rounded-full px-5 py-2 text-sm font-medium lg:inline-flex"
+              className="btn-glow hidden rounded-full px-5 py-2 text-sm font-medium xl:inline-flex"
             >
               Get an estimate
             </Link>
@@ -141,6 +156,16 @@ export default function Header() {
           </div>
         </div>
 
+        {/* Desktop search drops in under the bar — the bar itself has no room
+            for a full input once the nav and controls are in place. */}
+        {searchOpen && (
+          <div className="hidden border-t border-[var(--line)] bg-[var(--background)] lg:block">
+            <div className="mx-auto max-w-6xl px-6 py-3">
+              <SiteSearch onNavigate={() => setSearchOpen(false)} />
+            </div>
+          </div>
+        )}
+
         {/* Reading-progress hairline. Purely decorative and scroll-timeline
             driven, so browsers without support simply never paint it. */}
         <span className="scroll-progress" aria-hidden />
@@ -155,6 +180,10 @@ export default function Header() {
           }`}
         >
           <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            <div className="mb-3">
+              <SiteSearch onNavigate={() => setOpen(false)} />
+            </div>
+
             <nav className="flex flex-col gap-1">
               {NAV_LINKS.map((link, i) => {
                 const active = isActive(pathname, link.href);

@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Reveal from "@/components/Reveal";
-import Icon, { type IconName } from "@/components/Icon";
+import Icon from "@/components/Icon";
 import IconBadge from "@/components/IconBadge";
+import { GUIDES } from "@/lib/content";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/guides" },
@@ -12,36 +13,6 @@ export const metadata: Metadata = {
     "Clear, jargon-free guides to insurance decisions: how much life cover you need, term vs whole life, and India-specific guides to term and car insurance — each linked to a free calculator.",
 };
 
-const GUIDES: { href: string; icon: IconName; title: string; body: string; tag: string }[] = [
-  {
-    href: "/guides/how-much-life-insurance-do-you-need",
-    icon: "clipboard",
-    title: "How much life insurance do you need?",
-    body: "Size your cover with the DIME method — income, debts, mortgage, education — with a worked example.",
-    tag: "Life",
-  },
-  {
-    href: "/guides/term-vs-whole-life-insurance",
-    icon: "scale",
-    title: "Term vs. whole life insurance",
-    body: "Cost, cash value, and the ‘buy term, invest the difference’ argument — so you can pick the right one.",
-    tag: "Life",
-  },
-  {
-    href: "/guides/term-insurance-india-guide",
-    icon: "shield",
-    title: "Term insurance in India: a complete guide",
-    body: "How much cover to buy, what drives the premium, tax benefits, riders, and mistakes to avoid.",
-    tag: "India",
-  },
-  {
-    href: "/guides/car-insurance-india-explained",
-    icon: "car",
-    title: "Car insurance in India, explained",
-    body: "Third-party vs comprehensive, IDV, No-Claim Bonus, and 18% GST — and how to lower your premium.",
-    tag: "India",
-  },
-];
 
 export default function GuidesHubPage() {
   return (

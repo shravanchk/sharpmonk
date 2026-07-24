@@ -906,6 +906,128 @@ body {
   transform: rotate(45deg);
 }
 
+/* ---------------------------------------------------------------
+   Print / Save-as-PDF
+   Strips the page down to the assumptions and the result, so the
+   browser's own print dialog (where "Save as PDF" lives on every
+   platform) produces a clean handout — no PDF library shipped to
+   the client. See ResultActions.tsx.
+   --------------------------------------------------------------- */
+
+@media print {
+  /* Force the light palette: printing the dark theme wastes ink and
+     renders pale text on white. */
+  :root,
+  [data-theme="dark"],
+  [data-theme="light"] {
+    --background: #ffffff;
+    --foreground: #111827;
+    --muted: #4b5563;
+    --line: rgba(0, 0, 0, 0.18);
+    --line-strong: rgba(0, 0, 0, 0.28);
+    --surface-1: transparent;
+    --surface-2: transparent;
+    --panel: transparent;
+    --card-bg: #ffffff;
+    --card-shadow: none;
+    --card-shadow-hover: none;
+    --accent: #17325c;
+    --accent-soft: transparent;
+    --mesh-blob-opacity: 0;
+    --mesh-grain-opacity: 0;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #111827;
+  }
+
+  /* Site chrome, ads and anything interactive carry no meaning on paper. */
+  header,
+  footer,
+  .mesh-blob,
+  .mesh-grain,
+  .result-actions,
+  .consent-slide,
+  [data-print="hide"],
+  ins.adsbygoogle {
+    display: none !important;
+  }
+
+  /* Range inputs cannot render their value on paper — FieldShell already
+     prints it as the hint text beside the label, so drop the track. */
+  .field-range {
+    display: none !important;
+  }
+
+  /* Flatten selects to plain text so assumptions read as a list, not a form. */
+  .field-input {
+    appearance: none;
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    font-weight: 600;
+    color: #111827;
+    text-align: right;
+    width: auto;
+  }
+
+  /* Lay each field out as one "Label .......... value" row. Range fields
+     already print that way (the value is the FieldShell hint); this brings
+     selects, whose value sits in a control below the label, into line. */
+  .field-shell {
+    flex-direction: row !important;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem !important;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.3rem;
+  }
+
+  .field-shell > span:first-child {
+    flex: 1;
+  }
+
+  /* One column, nothing sticky or clipped across page breaks. */
+  .glass-card {
+    border: 1px solid var(--line) !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    break-inside: avoid;
+  }
+
+  .sticky {
+    position: static !important;
+  }
+
+  .grid {
+    display: block !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  /* Reveal animations must never leave printed content invisible. */
+  .reveal,
+  .reveal-ready .scroll-reveal,
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  a[href] {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mesh-blob,
   .shimmer,

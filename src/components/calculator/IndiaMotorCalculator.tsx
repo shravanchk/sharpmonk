@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RangeField, SelectField } from "./Fields";
 import MoneyResultPanel from "./MoneyResultPanel";
 import AdSlot from "@/components/AdSlot";
+import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import {
   estimateIndiaMotor,
   inr,
@@ -23,10 +24,21 @@ const DEFAULTS: IndiaMotorInputs = {
   zone: "A",
 };
 
+// Mirrors the controls below, so a shared link can only ever carry a value the
+// UI itself could have produced.
+const SCHEMA: Schema<IndiaMotorInputs> = {
+  vehicleType: { kind: "enum", values: ["car", "bike"] },
+  idv: { kind: "number", min: 50000, max: 3000000, step: 25000 },
+  vehicleAge: { kind: "number", min: 0, max: 15, step: 1 },
+  cover: { kind: "enum", values: ["comprehensive", "third-party"] },
+  ncbPct: { kind: "numEnum", values: [0, 20, 25, 35, 45, 50] },
+  zone: { kind: "enum", values: ["A", "B"] },
+};
+
 const NCB_OPTIONS = ["0", "20", "25", "35", "45", "50"] as const;
 
 export default function IndiaMotorCalculator() {
-  const [inputs, setInputs] = useState(DEFAULTS);
+  const [inputs, setInputs] = useShareableInputs(DEFAULTS, SCHEMA);
   const result = useMemo(() => estimateIndiaMotor(inputs), [inputs]);
 
   return (

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCountUp } from "@/hooks/useCountUp";
 import DonutChart from "./DonutChart";
+import ResultActions from "./ResultActions";
 import type { MoneyRow } from "@/lib/insuranceExtras";
 
 const usd = (v: number) =>
@@ -100,6 +101,8 @@ export default function MoneyResultPanel({
           );
         })}
       </div>
+
+      <ResultActions />
 
       <p className="text-muted mt-6 border-t border-[var(--line)] pt-4 text-xs leading-relaxed">
         Illustrative estimate only &mdash; not a quote or professional

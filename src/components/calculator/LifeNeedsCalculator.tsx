@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RangeField } from "./Fields";
 import MoneyResultPanel from "./MoneyResultPanel";
 import AdSlot from "@/components/AdSlot";
+import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import { estimateLifeInsuranceNeeds, type LifeNeedsInputs } from "@/lib/insuranceExtras";
 
 const currency = (v: number) => `$${v.toLocaleString()}`;
@@ -19,8 +20,21 @@ const DEFAULTS: LifeNeedsInputs = {
   liquidSavings: 20000,
 };
 
+// Mirrors the controls below, so a shared link can only ever carry a value the
+// UI itself could have produced.
+const SCHEMA: Schema<LifeNeedsInputs> = {
+  annualIncome: { kind: "number", min: 20000, max: 400000, step: 5000 },
+  yearsToReplace: { kind: "number", min: 1, max: 30, step: 1 },
+  nonMortgageDebt: { kind: "number", min: 0, max: 200000, step: 1000 },
+  mortgageBalance: { kind: "number", min: 0, max: 1000000, step: 5000 },
+  children: { kind: "number", min: 0, max: 6, step: 1 },
+  costPerChildEducation: { kind: "number", min: 0, max: 250000, step: 5000 },
+  existingLifeInsurance: { kind: "number", min: 0, max: 1000000, step: 10000 },
+  liquidSavings: { kind: "number", min: 0, max: 500000, step: 5000 },
+};
+
 export default function LifeNeedsCalculator() {
-  const [inputs, setInputs] = useState(DEFAULTS);
+  const [inputs, setInputs] = useShareableInputs(DEFAULTS, SCHEMA);
   const result = useMemo(() => estimateLifeInsuranceNeeds(inputs), [inputs]);
 
   return (

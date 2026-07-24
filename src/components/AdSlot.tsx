@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import {
   ADSENSE_ENABLED,
   ADSENSE_PUBLISHER_ID,
   CONSENT_EVENT,
   CONSENT_STORAGE_KEY,
-  type ConsentValue,
 } from "@/lib/adsense";
 
 declare global {
@@ -25,21 +24,41 @@ type AdSlotProps = {
 /** Designated ad placement. Renders a labeled placeholder until AdSense is
  *  enabled and the visitor has accepted cookies, so layout space is
  *  reserved (avoids CLS) without ever faking an ad before approval. */
+/**
+ * Consent lives in localStorage and changes via a window event, which makes it
+ * an external store rather than component state. Reading it in a `useState`
+ * initializer instead would render `false` on the server and `true` on the
+ * client for anyone who had already accepted, and React does not patch up a
+ * mismatched tree.
+ */
+const consentStore = {
+  subscribe(onChange: () => void) {
+    window.addEventListener(CONSENT_EVENT, onChange);
+    window.addEventListener("storage", onChange);
+    return () => {
+      window.removeEventListener(CONSENT_EVENT, onChange);
+      window.removeEventListener("storage", onChange);
+    };
+  },
+  getSnapshot() {
+    try {
+      return window.localStorage.getItem(CONSENT_STORAGE_KEY) === "accepted";
+    } catch {
+      return false;
+    }
+  },
+  getServerSnapshot() {
+    return false;
+  },
+};
+
 export default function AdSlot({ slot, className = "", format = "auto" }: AdSlotProps) {
   const ref = useRef<HTMLModElement>(null);
-  const [consented, setConsented] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem(CONSENT_STORAGE_KEY) === "accepted";
-  });
-
-  useEffect(() => {
-    const onConsent = (e: Event) => {
-      const detail = (e as CustomEvent<ConsentValue>).detail;
-      setConsented(detail === "accepted");
-    };
-    window.addEventListener(CONSENT_EVENT, onConsent);
-    return () => window.removeEventListener(CONSENT_EVENT, onConsent);
-  }, []);
+  const consented = useSyncExternalStore(
+    consentStore.subscribe,
+    consentStore.getSnapshot,
+    consentStore.getServerSnapshot,
+  );
 
   useEffect(() => {
     if (!ADSENSE_ENABLED || !consented) return;
@@ -54,6 +73,7 @@ export default function AdSlot({ slot, className = "", format = "auto" }: AdSlot
     return (
       <div
         aria-hidden
+        data-print="hide"
         className={`flex min-h-24 w-full items-center justify-center rounded-xl border border-dashed border-[var(--line-strong)] bg-[var(--surface-1)] text-xs tracking-wide text-muted uppercase ${className}`}
       >
         Advertisement space
@@ -64,6 +84,7 @@ export default function AdSlot({ slot, className = "", format = "auto" }: AdSlot
   return (
     <ins
       ref={ref}
+      data-print="hide"
       className={`adsbygoogle block ${className}`}
       style={{ display: "block" }}
       data-ad-client={ADSENSE_PUBLISHER_ID}

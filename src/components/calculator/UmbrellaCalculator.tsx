@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RangeField, SelectField } from "./Fields";
 import MoneyResultPanel from "./MoneyResultPanel";
 import AdSlot from "@/components/AdSlot";
+import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import { estimateUmbrellaInsurance, type ClaimsCount, type UmbrellaInputs, type UmbrellaLimit } from "@/lib/insuranceExtras";
 
 const DEFAULTS: UmbrellaInputs = {
@@ -13,8 +14,17 @@ const DEFAULTS: UmbrellaInputs = {
   priorClaims: "0",
 };
 
+// Mirrors the controls below, so a shared link can only ever carry a value the
+// UI itself could have produced.
+const SCHEMA: Schema<UmbrellaInputs> = {
+  coverageLimit: { kind: "numEnum", values: [1000000, 2000000, 3000000, 5000000] },
+  autoPolicies: { kind: "number", min: 0, max: 5, step: 1 },
+  homePolicies: { kind: "number", min: 0, max: 5, step: 1 },
+  priorClaims: { kind: "enum", values: ["0", "1", "2+"] },
+};
+
 export default function UmbrellaCalculator() {
-  const [inputs, setInputs] = useState(DEFAULTS);
+  const [inputs, setInputs] = useShareableInputs(DEFAULTS, SCHEMA);
   const result = useMemo(() => estimateUmbrellaInsurance(inputs), [inputs]);
 
   return (

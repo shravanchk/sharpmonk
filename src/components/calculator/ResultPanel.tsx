@@ -3,6 +3,7 @@
 import type { EstimateResult } from "@/lib/insuranceMath";
 import { useCountUp } from "@/hooks/useCountUp";
 import FactorImpactBars from "./FactorImpactBars";
+import ResultActions from "./ResultActions";
 
 const usd = (v: number) =>
   v.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
@@ -44,6 +45,8 @@ export default function ResultPanel({ typeLabel, result, formatCurrency = usd }:
           <FactorImpactBars items={result.breakdown} />
         </div>
       </div>
+
+      <ResultActions />
 
       <p className="text-muted mt-6 border-t border-[var(--line)] pt-4 text-xs leading-relaxed">
         Illustrative estimate only, based on generic industry rating

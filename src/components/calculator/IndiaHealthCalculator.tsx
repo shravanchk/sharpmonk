@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RangeField, SelectField, ToggleField } from "./Fields";
 import ResultPanel from "./ResultPanel";
 import AdSlot from "@/components/AdSlot";
+import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import {
   estimateIndiaHealth,
   inr,
@@ -23,8 +24,19 @@ const DEFAULTS: IndiaHealthInputs = {
   preExisting: "none",
 };
 
+// Mirrors the controls below, so a shared link can only ever carry a value the
+// UI itself could have produced.
+const SCHEMA: Schema<IndiaHealthInputs> = {
+  age: { kind: "number", min: 18, max: 75, step: 1 },
+  sumInsured: { kind: "number", min: 300000, max: 10000000, step: 100000 },
+  cityTier: { kind: "enum", values: ["metro", "tier2", "tier3"] },
+  plan: { kind: "enum", values: ["individual", "couple", "family"] },
+  smoker: { kind: "bool" },
+  preExisting: { kind: "enum", values: ["none", "controlled", "multiple"] },
+};
+
 export default function IndiaHealthCalculator() {
-  const [inputs, setInputs] = useState(DEFAULTS);
+  const [inputs, setInputs] = useShareableInputs(DEFAULTS, SCHEMA);
   const result = useMemo(() => estimateIndiaHealth(inputs), [inputs]);
 
   return (

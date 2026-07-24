@@ -10,7 +10,7 @@ type FieldShellProps = {
 
 export function FieldShell({ label, hint, children }: FieldShellProps) {
   return (
-    <label className="flex flex-col gap-1.5">
+    <label className="field-shell flex flex-col gap-1.5">
       <span className="flex items-baseline justify-between">
         <span className="text-sm font-medium text-[var(--foreground)]/90">{label}</span>
         {hint && <span className="text-muted text-xs">{hint}</span>}

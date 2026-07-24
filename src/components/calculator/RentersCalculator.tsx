@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RangeField, SelectField } from "./Fields";
 import MoneyResultPanel from "./MoneyResultPanel";
 import AdSlot from "@/components/AdSlot";
+import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import {
   estimateRentersInsurance,
   type ClaimsCount,
@@ -23,8 +24,18 @@ const DEFAULTS: RentersInputs = {
   claimsHistory: "0",
 };
 
+// Mirrors the controls below, so a shared link can only ever carry a value the
+// UI itself could have produced.
+const SCHEMA: Schema<RentersInputs> = {
+  personalPropertyValue: { kind: "number", min: 5000, max: 200000, step: 5000 },
+  liabilityLimit: { kind: "numEnum", values: [100000, 300000, 500000] },
+  deductible: { kind: "numEnum", values: [250, 500, 1000, 2500] },
+  regionRisk: { kind: "enum", values: ["low", "average", "high"] },
+  claimsHistory: { kind: "enum", values: ["0", "1", "2+"] },
+};
+
 export default function RentersCalculator() {
-  const [inputs, setInputs] = useState(DEFAULTS);
+  const [inputs, setInputs] = useShareableInputs(DEFAULTS, SCHEMA);
   const result = useMemo(() => estimateRentersInsurance(inputs), [inputs]);
 
   return (
