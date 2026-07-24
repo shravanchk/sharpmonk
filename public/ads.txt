@@ -1,0 +1,11 @@
+# Sharpmonk ads.txt
+#
+# TODO: Once your Google AdSense account is approved, replace the line
+# below with the exact line AdSense gives you under
+# Settings -> Sites -> "View site ads.txt guidance". It will look like:
+#
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+#
+# Also update ADSENSE_PUBLISHER_ID and ADSENSE_ENABLED in
+# src/lib/adsense.ts to match.
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
