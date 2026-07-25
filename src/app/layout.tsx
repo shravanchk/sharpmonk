@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
 import AdSenseLoader from "@/components/AdSenseLoader";
+import Analytics from "@/components/Analytics";
 import SiteStructuredData from "@/components/SiteStructuredData";
 import { themeInitScript } from "@/lib/theme";
 
@@ -61,6 +62,7 @@ export default function RootLayout({
         <Footer />
         <CookieConsent />
         <AdSenseLoader />
+        <Analytics />
       </body>
     </html>
   );

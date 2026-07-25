@@ -38,7 +38,7 @@ export default function PrivacyPage() {
           <h2>3. Information we do collect</h2>
           <p>We (and our service providers) may automatically collect:</p>
           <ul>
-            <li><strong>Usage data</strong> — pages visited, referring URLs, device/browser type, and approximate location derived from IP address, via privacy-conscious analytics.</li>
+            <li><strong>Usage data</strong> — pages visited, referring URLs, device/browser type, and approximate location derived from IP address, via Cloudflare Web Analytics. It is cookieless and does not fingerprint or assign a persistent identifier to you, so it runs without a consent prompt and cannot be used to track you across other sites.</li>
             <li><strong>Cookies and similar technologies</strong> — small files used to remember your cookie-consent choice and, where you&apos;ve consented, to support advertising (see Section 4).</li>
             <li><strong>Contact-form submissions</strong> — the contact page opens a pre-filled email in your own email client; we only receive what you choose to send.</li>
           </ul>
@@ -69,7 +69,8 @@ export default function PrivacyPage() {
           <p>
             We do not sell personal information. We share limited data with
             service providers strictly to operate the Site — for example,
-            our hosting provider and, where consented to, Google AdSense.
+            Cloudflare (hosting and analytics) and, where consented to,
+            Google AdSense.
             These providers are bound by their own privacy policies.
           </p>
 
