@@ -16,6 +16,7 @@ const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
     links: [
       { href: "/guides", label: "Insurance guides" },
       { href: "/glossary", label: "Glossary" },
+      { href: "/search", label: "Search the site" },
       { href: "/about", label: "About Sharpmonk" },
       { href: "/methodology", label: "Methodology" },
       { href: "/contact", label: "Contact" },

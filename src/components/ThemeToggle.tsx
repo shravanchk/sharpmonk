@@ -18,9 +18,14 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label="Toggle color theme"
       className="theme-toggle flex size-9 shrink-0 items-center justify-center rounded-full border border-[var(--line-strong)] bg-[var(--surface-1)] transition-colors hover:bg-[var(--surface-2)]"
     >
+      {/* Accessible name, not a static aria-label, so it says which way the
+          button goes. Only the applicable one is `display: inline`, so screen
+          readers announce exactly one. */}
+      <span className="sr-only theme-label-to-light">Switch to light theme</span>
+      <span className="sr-only theme-label-to-dark">Switch to dark theme</span>
+
       <span className="theme-icon theme-icon-sun" aria-hidden>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
           <circle cx="12" cy="12" r="4" />

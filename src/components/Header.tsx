@@ -47,6 +47,33 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // "/" opens search from anywhere, the way most doc sites behave. It lives
+  // here rather than in SiteSearch because on desktop the field does not exist
+  // until the panel is open.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = e.target as HTMLElement | null;
+      const typing =
+        el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
+      if (typing) return;
+      e.preventDefault();
+      setSearchOpen(true);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Escape closes the desktop search panel.
+  useEffect(() => {
+    if (!searchOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSearchOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [searchOpen]);
+
   // While the drawer is up it owns the screen: freeze the page behind it and
   // let Escape dismiss it.
   useEffect(() => {
@@ -122,14 +149,21 @@ export default function Header() {
               <RegionSwitch />
             </div>
 
+            {/* Reads as a search field rather than a bare magnifying glass —
+                as an icon-only button it was routinely missed, and people
+                asked for search that was already there. */}
             <button
               type="button"
-              aria-label="Search"
               aria-expanded={searchOpen}
+              aria-controls="site-search-panel"
               onClick={() => setSearchOpen((v) => !v)}
-              className="hidden size-9 shrink-0 items-center justify-center rounded-full border border-[var(--line-strong)] bg-[var(--surface-1)] transition-colors hover:bg-[var(--surface-2)] lg:flex"
+              className="text-muted hidden items-center gap-2 rounded-full border border-[var(--line-strong)] bg-[var(--surface-1)] py-1.5 pr-1.5 pl-3 text-sm transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--foreground)] lg:flex"
             >
-              <Icon name={searchOpen ? "check" : "search"} size={16} />
+              <Icon name="search" size={15} />
+              Search
+              <kbd className="rounded border border-[var(--line-strong)] px-1.5 py-0.5 font-mono text-[10px] leading-none">
+                /
+              </kbd>
             </button>
 
             <ThemeToggle />
@@ -159,9 +193,12 @@ export default function Header() {
         {/* Desktop search drops in under the bar — the bar itself has no room
             for a full input once the nav and controls are in place. */}
         {searchOpen && (
-          <div className="hidden border-t border-[var(--line)] bg-[var(--background)] lg:block">
+          <div
+            id="site-search-panel"
+            className="hidden border-t border-[var(--line)] bg-[var(--background)] lg:block"
+          >
             <div className="mx-auto max-w-6xl px-6 py-3">
-              <SiteSearch onNavigate={() => setSearchOpen(false)} />
+              <SiteSearch autoFocus onNavigate={() => setSearchOpen(false)} />
             </div>
           </div>
         )}

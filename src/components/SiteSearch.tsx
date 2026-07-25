@@ -20,7 +20,15 @@ const SECTION_TINT: Record<SearchDoc["section"], string> = {
  * Opens on click or "/" and behaves like a combobox: arrows move, Enter goes,
  * Escape closes.
  */
-export default function SiteSearch({ onNavigate }: { onNavigate?: () => void }) {
+export default function SiteSearch({
+  onNavigate,
+  autoFocus = false,
+}: {
+  onNavigate?: () => void;
+  /** Set when the field is revealed by an explicit action, so the caret is
+   *  already in it. Never on a field that is simply present on load. */
+  autoFocus?: boolean;
+}) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -35,20 +43,12 @@ export default function SiteSearch({ onNavigate }: { onNavigate?: () => void }) 
   // never point past a shrunken result list.
   const active = results.length === 0 ? 0 : Math.min(cursor, results.length - 1);
 
-  // "/" focuses search from anywhere, the way most doc sites behave.
+  // The "/" shortcut lives in Header, which knows whether the desktop panel
+  // needs opening first; two listeners would fight over focus, since the
+  // mobile drawer's field is in the DOM at all times.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "/" || e.metaKey || e.ctrlKey) return;
-      const el = e.target as HTMLElement | null;
-      const typing =
-        el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
-      if (typing) return;
-      e.preventDefault();
-      inputRef.current?.focus();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, []);
+    if (autoFocus) inputRef.current?.focus();
+  }, [autoFocus]);
 
   // Close when focus or a click leaves the widget.
   useEffect(() => {
@@ -60,11 +60,11 @@ export default function SiteSearch({ onNavigate }: { onNavigate?: () => void }) 
     return () => document.removeEventListener("mousedown", onDown);
   }, [open]);
 
-  const go = (doc: SearchDoc) => {
+  const go = (href: string) => {
     setOpen(false);
     setQuery("");
     onNavigate?.();
-    router.push(doc.href);
+    router.push(href);
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -82,7 +82,7 @@ export default function SiteSearch({ onNavigate }: { onNavigate?: () => void }) 
       setCursor((c) => (Math.min(c, results.length - 1) - 1 + results.length) % results.length);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      go(results[active]);
+      go(results[active].href);
     }
   };
 
@@ -122,9 +122,16 @@ export default function SiteSearch({ onNavigate }: { onNavigate?: () => void }) 
           className="glass-card absolute top-full right-0 left-0 z-50 mt-2 max-h-[60vh] overflow-y-auto rounded-2xl p-1.5"
         >
           {results.length === 0 ? (
-            <p className="text-muted px-3 py-6 text-center text-sm">
-              Nothing matches “{query.trim()}”.
-            </p>
+            <button
+              type="button"
+              onClick={() => go(`/search?q=${encodeURIComponent(query.trim())}`)}
+              className="w-full px-3 py-6 text-center"
+            >
+              <span className="text-muted block text-sm">Nothing matches “{query.trim()}”.</span>
+              <span className="mt-1 block text-sm text-[var(--accent)]">
+                Browse everything instead →
+              </span>
+            </button>
           ) : (
             results.map((doc, i) => (
               <button
@@ -133,7 +140,7 @@ export default function SiteSearch({ onNavigate }: { onNavigate?: () => void }) 
                 role="option"
                 aria-selected={i === active}
                 onMouseEnter={() => setCursor(i)}
-                onClick={() => go(doc)}
+                onClick={() => go(doc.href)}
                 className={`flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors ${
                   i === active ? "bg-[var(--surface-2)]" : "hover:bg-[var(--surface-1)]"
                 }`}
