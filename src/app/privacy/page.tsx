@@ -39,7 +39,8 @@ export default function PrivacyPage() {
           <p>We (and our service providers) may automatically collect:</p>
           <ul>
             <li><strong>Usage data</strong> — pages visited, referring URLs, device/browser type, and approximate location derived from IP address, via Cloudflare Web Analytics. It is cookieless and does not fingerprint or assign a persistent identifier to you, so it runs without a consent prompt and cannot be used to track you across other sites.</li>
-            <li><strong>Cookies and similar technologies</strong> — small files used to remember your cookie-consent choice and, where you&apos;ve consented, to support advertising (see Section 4).</li>
+            <li><strong>Browser storage</strong> — your theme choice, and your answer to the advertising-consent prompt if you are shown one, are kept in your browser&apos;s local storage on your own device. They are preferences, are never sent to us, and are not used to identify or track you. You can clear them at any time through your browser settings.</li>
+            <li><strong>Advertising cookies</strong> — only where you have consented, and only once ads are live (see Section 4). While advertising is switched off, the Site sets no cookies at all.</li>
             <li><strong>Contact-form submissions</strong> — the contact page opens a pre-filled email in your own email client; we only receive what you choose to send.</li>
           </ul>
 

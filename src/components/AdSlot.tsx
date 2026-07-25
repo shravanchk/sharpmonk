@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useSyncExternalStore } from "react";
-import {
-  ADSENSE_ENABLED,
-  ADSENSE_PUBLISHER_ID,
-  CONSENT_EVENT,
-  CONSENT_STORAGE_KEY,
-} from "@/lib/adsense";
+import { ADSENSE_ENABLED, ADSENSE_PUBLISHER_ID, consentStore } from "@/lib/adsense";
 
 declare global {
   interface Window {
@@ -24,40 +19,12 @@ type AdSlotProps = {
 /** Designated ad placement. Renders a labeled placeholder until AdSense is
  *  enabled and the visitor has accepted cookies, so layout space is
  *  reserved (avoids CLS) without ever faking an ad before approval. */
-/**
- * Consent lives in localStorage and changes via a window event, which makes it
- * an external store rather than component state. Reading it in a `useState`
- * initializer instead would render `false` on the server and `true` on the
- * client for anyone who had already accepted, and React does not patch up a
- * mismatched tree.
- */
-const consentStore = {
-  subscribe(onChange: () => void) {
-    window.addEventListener(CONSENT_EVENT, onChange);
-    window.addEventListener("storage", onChange);
-    return () => {
-      window.removeEventListener(CONSENT_EVENT, onChange);
-      window.removeEventListener("storage", onChange);
-    };
-  },
-  getSnapshot() {
-    try {
-      return window.localStorage.getItem(CONSENT_STORAGE_KEY) === "accepted";
-    } catch {
-      return false;
-    }
-  },
-  getServerSnapshot() {
-    return false;
-  },
-};
-
 export default function AdSlot({ slot, className = "", format = "auto" }: AdSlotProps) {
   const ref = useRef<HTMLModElement>(null);
   const consented = useSyncExternalStore(
     consentStore.subscribe,
-    consentStore.getSnapshot,
-    consentStore.getServerSnapshot,
+    consentStore.hasAccepted,
+    () => false,
   );
 
   useEffect(() => {
