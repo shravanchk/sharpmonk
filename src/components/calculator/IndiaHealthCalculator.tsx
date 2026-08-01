@@ -98,9 +98,7 @@ export default function IndiaHealthCalculator() {
           </div>
         </div>
 
-        <div className="mt-8">
-          <AdSlot slot="india-health-inline" className="min-h-20" />
-        </div>
+        <AdSlot slot="india-health-inline" />
       </div>
 
       <ResultPanel typeLabel="Health cover" result={result} formatCurrency={inr} />

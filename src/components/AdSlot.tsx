@@ -16,9 +16,16 @@ type AdSlotProps = {
   format?: string;
 };
 
-/** Designated ad placement. Renders a labeled placeholder until AdSense is
- *  enabled and the visitor has accepted cookies, so layout space is
- *  reserved (avoids CLS) without ever faking an ad before approval. */
+/** Designated ad placement.
+ *
+ *  Renders nothing at all while AdSense is switched off: a dashed
+ *  "advertisement space" box on a live page reads as an unfinished site, and
+ *  reserving room for an ad that cannot arrive buys no CLS protection. Once
+ *  ads are enabled the space *is* held open while the visitor has yet to
+ *  answer the consent banner, because then an ad really can drop in.
+ *
+ *  The outer spacing lives here rather than at the call sites so that
+ *  disabling ads leaves no orphaned margin behind. */
 export default function AdSlot({ slot, className = "", format = "auto" }: AdSlotProps) {
   const ref = useRef<HTMLModElement>(null);
   const consented = useSyncExternalStore(
@@ -36,28 +43,24 @@ export default function AdSlot({ slot, className = "", format = "auto" }: AdSlot
     }
   }, [consented]);
 
-  if (!ADSENSE_ENABLED || !consented) {
-    return (
-      <div
-        aria-hidden
-        data-print="hide"
-        className={`flex min-h-24 w-full items-center justify-center rounded-xl border border-dashed border-[var(--line-strong)] bg-[var(--surface-1)] text-xs tracking-wide text-muted uppercase ${className}`}
-      >
-        Advertisement space
-      </div>
-    );
-  }
+  if (!ADSENSE_ENABLED) return null;
 
   return (
-    <ins
-      ref={ref}
-      data-print="hide"
-      className={`adsbygoogle block ${className}`}
-      style={{ display: "block" }}
-      data-ad-client={ADSENSE_PUBLISHER_ID}
-      data-ad-slot={slot}
-      data-ad-format={format}
-      data-full-width-responsive="true"
-    />
+    <div className={`mt-8 ${className}`}>
+      {consented ? (
+        <ins
+          ref={ref}
+          data-print="hide"
+          className="adsbygoogle block min-h-20"
+          style={{ display: "block" }}
+          data-ad-client={ADSENSE_PUBLISHER_ID}
+          data-ad-slot={slot}
+          data-ad-format={format}
+          data-full-width-responsive="true"
+        />
+      ) : (
+        <div aria-hidden data-print="hide" className="min-h-20 w-full" />
+      )}
+    </div>
   );
 }

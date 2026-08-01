@@ -68,9 +68,7 @@ export default function UmbrellaCalculator() {
           />
         </div>
 
-        <div className="mt-8">
-          <AdSlot slot="umbrella-inline" className="min-h-20" />
-        </div>
+        <AdSlot slot="umbrella-inline" />
       </div>
 
       <MoneyResultPanel

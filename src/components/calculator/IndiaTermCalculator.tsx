@@ -68,9 +68,7 @@ export default function IndiaTermCalculator() {
           </div>
         </div>
 
-        <div className="mt-8">
-          <AdSlot slot="india-term-inline" className="min-h-20" />
-        </div>
+        <AdSlot slot="india-term-inline" />
       </div>
 
       <ResultPanel typeLabel="Term life" result={result} formatCurrency={inr} />

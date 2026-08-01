@@ -99,9 +99,7 @@ export default function TermVsWholeCalculator() {
           </div>
         </div>
 
-        <div className="mt-8">
-          <AdSlot slot="term-vs-whole-inline" className="min-h-20" />
-        </div>
+        <AdSlot slot="term-vs-whole-inline" />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">

@@ -94,9 +94,7 @@ export default function RentersCalculator() {
           />
         </div>
 
-        <div className="mt-8">
-          <AdSlot slot="renters-inline" className="min-h-20" />
-        </div>
+        <AdSlot slot="renters-inline" />
       </div>
 
       <MoneyResultPanel

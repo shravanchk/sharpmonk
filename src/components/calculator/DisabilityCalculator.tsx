@@ -79,9 +79,7 @@ export default function DisabilityCalculator() {
           />
         </div>
 
-        <div className="mt-8">
-          <AdSlot slot="disability-inline" className="min-h-20" />
-        </div>
+        <AdSlot slot="disability-inline" />
       </div>
 
       <MoneyResultPanel

@@ -102,9 +102,7 @@ export default function PetCalculator() {
           />
         </div>
 
-        <div className="mt-8">
-          <AdSlot slot="pet-inline" className="min-h-20" />
-        </div>
+        <AdSlot slot="pet-inline" />
       </div>
 
       <MoneyResultPanel

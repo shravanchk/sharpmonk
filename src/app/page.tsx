@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import HeroEstimator from "@/components/HeroEstimator";
 import Icon, { type IconName } from "@/components/Icon";
 import IconBadge from "@/components/IconBadge";
 
@@ -16,6 +17,9 @@ const TOOLS: { href: string; icon: IconName; title: string; body: string }[] = [
   { href: "/calculators/umbrella-insurance", icon: "umbrella", title: "Umbrella insurance", body: "Extra liability cover above your auto and home limits." },
   { href: "/calculators/pet-insurance", icon: "paw", title: "Pet insurance", body: "Premiums for dogs and cats by age, breed, and plan." },
   { href: "/calculators/term-vs-whole-life", icon: "scale", title: "Term vs. whole life", body: "Cost and cash-value comparison for the same coverage." },
+  { href: "/in/term-life", icon: "shield", title: "Term life (India, ₹)", body: "Term cover premium in rupees by sum assured and age." },
+  { href: "/in/health-insurance", icon: "heart-pulse", title: "Health / mediclaim (India, ₹)", body: "Individual or family-floater premium by sum insured." },
+  { href: "/in/car-bike-insurance", icon: "car", title: "Car & bike (India, ₹)", body: "Own-damage + third-party + GST with No-Claim Bonus." },
 ];
 
 const STEPS = [
@@ -69,9 +73,8 @@ export default function Home() {
             className="reveal text-muted mt-5 max-w-xl text-lg leading-relaxed"
             style={{ "--delay": "0.25s" } as React.CSSProperties}
           >
-            Seven free calculators estimate premiums, coverage needs, and cost
-            comparisons across life, health, auto, home, renters, umbrella, and
-            pet insurance — with a transparent breakdown of every number.
+            Ten free calculators covering life, health, auto, home and more —
+            in dollars and rupees, each one showing the math behind its number.
           </p>
 
           <div
@@ -87,8 +90,11 @@ export default function Home() {
             </Link>
           </div>
 
+          {/* Hidden on phones so the live estimator clears the fold: the badge
+              above already says "free, no signup", and the benefits section
+              makes the same three points further down. */}
           <ul
-            className="reveal text-muted mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm"
+            className="reveal text-muted mt-8 hidden flex-wrap gap-x-6 gap-y-2 text-sm sm:flex"
             style={{ "--delay": "0.45s" } as React.CSSProperties}
           >
             {["No account required", "Instant results", "Nothing sent to a server"].map((t) => (
@@ -100,38 +106,11 @@ export default function Home() {
           </ul>
         </div>
 
-        {/* Product preview card — the hero's largest element, so it paints
-            flat: no fade, no scroll observer, nothing between it and LCP. */}
+        {/* Working estimator, not a screenshot of one — the hero's largest
+            element, so it paints flat: no fade, no scroll observer, nothing
+            between it and LCP. */}
         <Reveal immediate className="relative">
-          <div className="glass-card rounded-3xl p-6 sm:p-7">
-            <div className="flex items-center justify-between">
-              <span className="text-muted font-mono text-xs tracking-[0.14em] uppercase">Life · monthly estimate</span>
-              <IconBadge name="shield" size={18} badgeSize="sm" />
-            </div>
-            <div className="mt-4 flex items-end gap-2">
-              <span className="text-5xl font-semibold tracking-tight">$42</span>
-              <span className="text-muted mb-1.5 text-sm">/ month</span>
-            </div>
-            <p className="text-muted mt-1 text-sm">$504 / year · $500k, 20-yr term</p>
-
-            <div className="mt-6 flex flex-col gap-3 border-t border-[var(--line)] pt-5">
-              {[
-                { label: "Base rate", w: 60 },
-                { label: "Age 35", w: 42 },
-                { label: "Non-smoker", w: 26 },
-                { label: "Good health", w: 34 },
-              ].map((r) => (
-                <div key={r.label}>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[var(--foreground)]/85">{r.label}</span>
-                  </div>
-                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-[var(--surface-2)]">
-                    <div className="bar-fill h-full rounded-full bg-[var(--accent)]" style={{ width: `${r.w}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <HeroEstimator />
         </Reveal>
       </section>
 
@@ -153,7 +132,7 @@ export default function Home() {
       <section className="relative mx-auto w-full max-w-6xl px-6 py-16">
         <div className="flex flex-col gap-2">
           <span className="text-[var(--accent)] font-mono text-xs tracking-[0.16em] uppercase">The tools</span>
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Seven calculators, one site</h2>
+          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Ten calculators, one site</h2>
         </div>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

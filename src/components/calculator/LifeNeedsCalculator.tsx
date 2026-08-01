@@ -112,9 +112,7 @@ export default function LifeNeedsCalculator() {
           />
         </div>
 
-        <div className="mt-8">
-          <AdSlot slot="life-needs-inline" className="min-h-20" />
-        </div>
+        <AdSlot slot="life-needs-inline" />
       </div>
 
       <MoneyResultPanel

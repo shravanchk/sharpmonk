@@ -97,9 +97,7 @@ export default function IndiaMotorCalculator() {
           />
         </div>
 
-        <div className="mt-8">
-          <AdSlot slot="india-motor-inline" className="min-h-20" />
-        </div>
+        <AdSlot slot="india-motor-inline" />
       </div>
 
       <MoneyResultPanel
