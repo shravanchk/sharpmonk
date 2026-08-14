@@ -13,7 +13,7 @@ type NavLink = { href: string; label: string; icon: IconName; hint: string };
 
 const NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home", icon: "home", hint: "Start here" },
-  { href: "/calculators", label: "Calculators", icon: "calculator", hint: "Seven free estimators" },
+  { href: "/calculators", label: "Calculators", icon: "calculator", hint: "Ten free estimators" },
   { href: "/in", label: "India", icon: "globe", hint: "Premiums in ₹" },
   { href: "/guides", label: "Guides", icon: "book", hint: "Plain-English explainers" },
   { href: "/about", label: "About", icon: "info", hint: "How the numbers work" },

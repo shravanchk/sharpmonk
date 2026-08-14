@@ -7,7 +7,9 @@ import AdSlot from "@/components/AdSlot";
 import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import { estimateLifeInsuranceNeeds, type LifeNeedsInputs } from "@/lib/insuranceExtras";
 
-const currency = (v: number) => `$${v.toLocaleString()}`;
+import { num } from "@/lib/format";
+
+const currency = (v: number) => `$${num(v)}`;
 
 const DEFAULTS: LifeNeedsInputs = {
   annualIncome: 80000,

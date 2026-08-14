@@ -8,9 +8,7 @@ import { useShareableInputs, type Schema } from "@/hooks/useShareableInputs";
 import { useCountUp } from "@/hooks/useCountUp";
 import { compareTermVsWholeLife, type TermVsWholeInputs } from "@/lib/insuranceExtras";
 import type { HealthRating, TermYears } from "@/lib/insuranceMath";
-
-const currency = (v: number) =>
-  v.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+import { usd as currency } from "@/lib/format";
 
 const DEFAULTS: TermVsWholeInputs = {
   age: 35,

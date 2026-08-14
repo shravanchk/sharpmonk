@@ -22,6 +22,20 @@ export type SearchDoc = {
 
 const PAGES: SearchDoc[] = [
   {
+    href: "/calculators/term-life",
+    title: "Term life insurance rates by age",
+    body: "Estimated monthly cost of a 20-year term policy from $250,000 to $2 million, ages 25 to 60.",
+    section: "Page",
+    keywords: "cost chart price rate table how much life insurance per month premium by age",
+  },
+  {
+    href: "/embed",
+    title: "Embed a calculator",
+    body: "Put a Sharpmonk calculator on your own site with one line of HTML.",
+    section: "Page",
+    keywords: "iframe widget publisher blog embed code snippet",
+  },
+  {
     href: "/about",
     title: "About Sharpmonk",
     body: "Who builds these calculators and why they are free.",

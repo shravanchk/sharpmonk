@@ -12,6 +12,8 @@
  * looks the way it does instead of a black-box figure.
  */
 
+import { num } from "./format";
+
 export type BreakdownItem = {
   label: string;
   /** Multiplier applied relative to the base rate (1 = no change). */
@@ -222,7 +224,7 @@ export function estimateAuto(inputs: AutoInputs): EstimateResult {
       note:
         inputs.coverage === "liability"
           ? "Not rated (liability doesn't cover your vehicle)"
-          : `$${inputs.vehicleValue.toLocaleString()} vehicle`,
+          : `$${num(inputs.vehicleValue)} vehicle`,
     },
     { label: "Annual mileage", multiplier: MILEAGE_MULTIPLIER[inputs.mileage], note: `${inputs.mileage} mileage` },
     {
@@ -281,7 +283,7 @@ export function estimateHome(inputs: HomeInputs): EstimateResult {
     {
       label: "Home value base",
       multiplier: 1,
-      note: `$${inputs.homeValue.toLocaleString()} × 0.42%/yr`,
+      note: `$${num(inputs.homeValue)} × 0.42%/yr`,
     },
     { label: "Home age", multiplier: ageFactor, note: `${inputs.homeAgeYears} years old` },
     {
@@ -295,7 +297,7 @@ export function estimateHome(inputs: HomeInputs): EstimateResult {
       note: "Peril & replacement-cost scope",
     },
     {
-      label: `$${inputs.deductible.toLocaleString()} deductible`,
+      label: `$${num(inputs.deductible)} deductible`,
       multiplier: DEDUCTIBLE_MULTIPLIER[inputs.deductible],
       note: "Higher deductible lowers premium",
     },

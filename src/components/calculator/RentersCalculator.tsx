@@ -14,7 +14,9 @@ import {
   type RiskLevel,
 } from "@/lib/insuranceExtras";
 
-const currency = (v: number) => `$${v.toLocaleString()}`;
+import { num } from "@/lib/format";
+
+const currency = (v: number) => `$${num(v)}`;
 
 const DEFAULTS: RentersInputs = {
   personalPropertyValue: 30000,

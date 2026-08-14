@@ -12,7 +12,7 @@
  * only ever carry a value the UI itself could have produced.
  */
 
-import type { Schema } from "@/hooks/useShareableInputs";
+import type { Schema } from "@/lib/shareableUrl";
 import type {
   AutoInputs,
   HealthInputs,

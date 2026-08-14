@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { allLongtailPaths } from "@/lib/longtail";
 
 export const dynamic = "force-static";
 
@@ -17,6 +18,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/calculators/umbrella-insurance", priority: 0.8, changeFrequency: "weekly" },
     { path: "/calculators/pet-insurance", priority: 0.8, changeFrequency: "weekly" },
     { path: "/calculators/term-vs-whole-life", priority: 0.8, changeFrequency: "weekly" },
+    { path: "/calculators/term-life", priority: 0.9, changeFrequency: "weekly" },
+    { path: "/embed", priority: 0.5, changeFrequency: "monthly" },
     { path: "/in", priority: 0.9, changeFrequency: "weekly" },
     { path: "/in/term-life", priority: 0.85, changeFrequency: "weekly" },
     { path: "/in/health-insurance", priority: 0.85, changeFrequency: "weekly" },
@@ -35,10 +38,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/disclaimer", priority: 0.3, changeFrequency: "yearly" },
   ];
 
-  return routes.map((r) => ({
+  // The generated cost pages. Listed below the hand-written routes and at a
+  // lower priority: they are the long tail, and the hub pages that link them
+  // are what should rank for the broader terms.
+  const generated = allLongtailPaths().map((path) => ({
+    path,
+    priority: 0.7,
+    changeFrequency: "monthly" as const,
+  }));
+
+  return [...routes, ...generated].map((r) => ({
     url: `${siteUrl}${r.path}`,
     lastModified: now,
     changeFrequency: r.changeFrequency,
     priority: r.priority,
   }));
 }
+
+// Note: the /embed/* pages are intentionally absent. They are chrome-less
+// duplicates of the calculators, meant to be framed on other sites, and are
+// marked noindex — only the /embed gallery that hands out the snippets is
+// listed above.

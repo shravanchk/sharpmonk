@@ -2,11 +2,9 @@
 
 import type { EstimateResult } from "@/lib/insuranceMath";
 import { useCountUp } from "@/hooks/useCountUp";
+import { usd } from "@/lib/format";
 import FactorImpactBars from "./FactorImpactBars";
 import ResultActions from "./ResultActions";
-
-const usd = (v: number) =>
-  v.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 type Props = {
   typeLabel: string;

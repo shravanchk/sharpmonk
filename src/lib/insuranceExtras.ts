@@ -6,6 +6,7 @@
  */
 
 import { estimateLife, type HealthRating, type TermYears } from "./insuranceMath";
+import { num } from "./format";
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const round2 = (value: number) => Math.round(value * 100) / 100;
@@ -47,13 +48,13 @@ export function estimateLifeInsuranceNeeds(inputs: LifeNeedsInputs): LifeNeedsRe
     {
       label: "Income replacement",
       amount: income,
-      note: `${inputs.yearsToReplace} yrs × $${inputs.annualIncome.toLocaleString()}/yr`,
+      note: `${inputs.yearsToReplace} yrs × $${num(inputs.annualIncome)}/yr`,
     },
     { label: "Mortgage payoff", amount: mortgage, note: "Remaining mortgage balance" },
     {
       label: "Education fund",
       amount: education,
-      note: `${inputs.children} child(ren) × $${inputs.costPerChildEducation.toLocaleString()}`,
+      note: `${inputs.children} child(ren) × $${num(inputs.costPerChildEducation)}`,
     },
     {
       label: "Existing coverage & savings",
@@ -154,8 +155,8 @@ export function estimateRentersInsurance(inputs: RentersInputs): RentersResult {
   const annualPremium = round2(subtotal * multiplier);
 
   const rows: MoneyRow[] = [
-    { label: "Personal property coverage", amount: propertyBase, note: `$${inputs.personalPropertyValue.toLocaleString()} of belongings` },
-    { label: "Liability coverage", amount: liabilityBase, note: `$${inputs.liabilityLimit.toLocaleString()} limit` },
+    { label: "Personal property coverage", amount: propertyBase, note: `$${num(inputs.personalPropertyValue)} of belongings` },
+    { label: "Liability coverage", amount: liabilityBase, note: `$${num(inputs.liabilityLimit)} limit` },
     { label: "Deductible adjustment", amount: subtotal * (RENTERS_DEDUCTIBLE_MULT[inputs.deductible] - 1), note: `$${inputs.deductible} deductible` },
     { label: "Regional risk", amount: subtotal * RENTERS_DEDUCTIBLE_MULT[inputs.deductible] * (RISK_MULT[inputs.regionRisk] - 1), note: `${inputs.regionRisk} area` },
     { label: "Claims history", amount: annualPremium - subtotal * RENTERS_DEDUCTIBLE_MULT[inputs.deductible] * RISK_MULT[inputs.regionRisk], note: `${inputs.claimsHistory} claims` },

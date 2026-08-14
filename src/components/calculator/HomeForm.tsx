@@ -10,7 +10,9 @@ import type {
   RegionCost,
 } from "@/lib/insuranceMath";
 
-const currency = (v: number) => `$${v.toLocaleString()}`;
+import { num } from "@/lib/format";
+
+const currency = (v: number) => `$${num(v)}`;
 
 type Props = {
   value: HomeInputs;

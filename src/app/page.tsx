@@ -150,6 +150,20 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
+
+        {/* Straight to the numbers, for readers who would rather read a table
+            than move a slider. */}
+        <div className="text-muted mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+          <span>Or read the rates off a chart:</span>
+          <Link href="/calculators/term-life" className="text-[var(--accent)] inline-flex items-center gap-1 font-medium underline-offset-2 hover:underline">
+            Term life rates by age (US)
+            <Icon name="arrow-right" size={14} />
+          </Link>
+          <Link href="/in/term-life" className="text-[var(--accent)] inline-flex items-center gap-1 font-medium underline-offset-2 hover:underline">
+            Term premium chart (India)
+            <Icon name="arrow-right" size={14} />
+          </Link>
+        </div>
       </section>
 
       {/* How it works */}

@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import { useCountUp } from "@/hooks/useCountUp";
+import { usd } from "@/lib/format";
 import DonutChart from "./DonutChart";
 import ResultActions from "./ResultActions";
 import type { MoneyRow } from "@/lib/insuranceExtras";
-
-const usd = (v: number) =>
-  v.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 type Props = {
   eyebrow: string;
