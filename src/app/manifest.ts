@@ -6,10 +6,10 @@ export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Sharpmonk — Free Insurance Calculator & Estimator",
+    name: "Sharpmonk — Exam Photo & Signature Resizer",
     short_name: "Sharpmonk",
     description:
-      "Free, no-signup calculators for life, health, auto, home, renters, umbrella, and pet insurance.",
+      "Resize exam photos and signatures to the exact pixels, KB and DPI the official notification asks for. Nothing is uploaded.",
     start_url: "/",
     display: "standalone",
     background_color: "#05070d",

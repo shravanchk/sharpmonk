@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "How Sharpmonk collects, uses, and protects information, including cookies used for analytics and advertising.",
 };
 
-const EFFECTIVE_DATE = "July 23, 2026";
+const EFFECTIVE_DATE = "October 18, 2026";
 
 export default function PrivacyPage() {
   return (
@@ -21,18 +21,20 @@ export default function PrivacyPage() {
           <h2>1. Overview</h2>
           <p>
             Sharpmonk (&ldquo;Sharpmonk,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) operates
-            sharpmonk.com (the &ldquo;Site&rdquo;), including the free insurance
-            calculator. This Privacy Policy explains what information we
+            sharpmonk.com (the &ldquo;Site&rdquo;), including its image resizing
+            tools. This Privacy Policy explains what information we
             collect, how we use it, and the choices you have. By using the
             Site, you agree to the practices described here.
           </p>
 
-          <h2>2. Information the calculator does not collect</h2>
+          <h2>2. Your images are never collected</h2>
           <p>
-            The insurance calculator runs entirely in your browser. Ages,
-            coverage amounts, vehicle values, home values, and every other
-            figure you enter are used only to compute an on-screen estimate
-            and are never transmitted to, or stored on, our servers.
+            The tools run entirely in your browser. Photos, signatures,
+            thumb impressions and other images you open are decoded, resized
+            and re-encoded on your own device, and the result goes straight
+            to your downloads. They are never transmitted to us or to anyone
+            else, and the Site has no server capable of receiving them. The
+            sizes and settings you enter stay on your device too.
           </p>
 
           <h2>3. Information we do collect</h2>

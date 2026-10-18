@@ -4,31 +4,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
-import RegionSwitch from "./RegionSwitch";
 import MonkMark from "./MonkMark";
 import Icon, { type IconName } from "./Icon";
-import SiteSearch from "./SiteSearch";
 
 type NavLink = { href: string; label: string; icon: IconName; hint: string };
 
 const NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home", icon: "home", hint: "Start here" },
-  { href: "/calculators", label: "Calculators", icon: "calculator", hint: "Ten free estimators" },
-  { href: "/in", label: "India", icon: "globe", hint: "Premiums in ₹" },
-  { href: "/guides", label: "Guides", icon: "book", hint: "Plain-English explainers" },
-  { href: "/about", label: "About", icon: "info", hint: "How the numbers work" },
-  { href: "/contact", label: "Contact", icon: "mail", hint: "Questions and feedback" },
+  { href: "/exams", label: "Exams", icon: "clipboard", hint: "IBPS, NEET, JEE upload sizes" },
+  { href: "/resize-image-to-kb", label: "Resize to KB", icon: "ruler", hint: "Any size window, any pixels" },
+  { href: "/signature-resize", label: "Signature", icon: "pen", hint: "Clean ink on white paper" },
+  { href: "/how-it-works", label: "How it works", icon: "info", hint: "Privacy, KB maths, padding" },
 ];
 
-// Match the section, not the prefix — a bare `startsWith` would light up
-// "India" for any future route that merely begins with /in.
+// Match the section, not the prefix — a bare `startsWith` would light up a
+// link for any unrelated route that merely shares its first letters.
 const isActive = (pathname: string, href: string) =>
   href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(
     () => typeof window !== "undefined" && window.scrollY > 8,
   );
@@ -46,33 +42,6 @@ export default function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  // "/" opens search from anywhere, the way most doc sites behave. It lives
-  // here rather than in SiteSearch because on desktop the field does not exist
-  // until the panel is open.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
-      const el = e.target as HTMLElement | null;
-      const typing =
-        el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
-      if (typing) return;
-      e.preventDefault();
-      setSearchOpen(true);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, []);
-
-  // Escape closes the desktop search panel.
-  useEffect(() => {
-    if (!searchOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSearchOpen(false);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [searchOpen]);
 
   // While the drawer is up it owns the screen: freeze the page behind it and
   // let Escape dismiss it.
@@ -143,38 +112,14 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-2 lg:gap-3">
-            {/* Wrapper rather than a `hidden` class on the switch itself — its
-                own `inline-flex` would win the display cascade. */}
-            <div className="hidden lg:block">
-              <RegionSwitch />
-            </div>
-
-            {/* Reads as a search field rather than a bare magnifying glass —
-                as an icon-only button it was routinely missed, and people
-                asked for search that was already there. */}
-            <button
-              type="button"
-              aria-expanded={searchOpen}
-              aria-controls="site-search-panel"
-              onClick={() => setSearchOpen((v) => !v)}
-              className="text-muted hidden items-center gap-2 rounded-full border border-[var(--line-strong)] bg-[var(--surface-1)] py-1.5 pr-1.5 pl-3 text-sm transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--foreground)] lg:flex"
-            >
-              <Icon name="search" size={15} />
-              Search
-              <kbd className="rounded border border-[var(--line-strong)] px-1.5 py-0.5 font-mono text-[10px] leading-none">
-                /
-              </kbd>
-            </button>
-
             <ThemeToggle />
 
-            {/* Only from xl: at lg the nav, region switch and search already
-                fill the bar, and adding this back clipped it. */}
+            {/* Only from xl: at lg the nav already fills the bar. */}
             <Link
-              href="/calculators"
+              href="/exams"
               className="btn-glow hidden rounded-full px-5 py-2 text-sm font-medium xl:inline-flex"
             >
-              Get an estimate
+              Find your exam
             </Link>
 
             <button
@@ -190,19 +135,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Desktop search drops in under the bar — the bar itself has no room
-            for a full input once the nav and controls are in place. */}
-        {searchOpen && (
-          <div
-            id="site-search-panel"
-            className="hidden border-t border-[var(--line)] bg-[var(--background)] lg:block"
-          >
-            <div className="mx-auto max-w-6xl px-6 py-3">
-              <SiteSearch autoFocus onNavigate={() => setSearchOpen(false)} />
-            </div>
-          </div>
-        )}
-
         {/* Reading-progress hairline. Purely decorative and scroll-timeline
             driven, so browsers without support simply never paint it. */}
         <span className="scroll-progress" aria-hidden />
@@ -217,10 +149,6 @@ export default function Header() {
           }`}
         >
           <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
-            <div className="mb-3">
-              <SiteSearch onNavigate={() => setOpen(false)} />
-            </div>
-
             <nav className="flex flex-col gap-1">
               {NAV_LINKS.map((link, i) => {
                 const active = isActive(pathname, link.href);
@@ -262,18 +190,11 @@ export default function Header() {
             </nav>
 
             <div className="mt-3 border-t border-[var(--line)] pt-3">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-muted font-mono text-[11px] tracking-wider uppercase">
-                  Region
-                </span>
-                <RegionSwitch variant="block" className="max-w-36" />
-              </div>
-
               <Link
-                href="/calculators"
-                className="btn-glow mt-3 flex min-h-12 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold"
+                href="/exams"
+                className="btn-glow flex min-h-12 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold"
               >
-                Get an estimate
+                Find your exam
                 <Icon name="arrow-right" size={16} />
               </Link>
             </div>

@@ -4,10 +4,10 @@ import Link from "next/link";
 export const metadata: Metadata = {
   alternates: { canonical: "/terms" },
   title: "Terms of Service",
-  description: "The terms governing your use of Sharpmonk and its insurance calculator.",
+  description: "The terms governing your use of Sharpmonk and its image resizing tools.",
 };
 
-const EFFECTIVE_DATE = "July 23, 2026";
+const EFFECTIVE_DATE = "October 18, 2026";
 
 export default function TermsPage() {
   return (
@@ -27,20 +27,22 @@ export default function TermsPage() {
 
           <h2>2. Description of service</h2>
           <p>
-            Sharpmonk provides free, browser-based calculators, including an
-            insurance premium estimator, for general informational and
-            educational purposes. Use of the Site does not require an
-            account or payment.
+            Sharpmonk provides free, browser-based tools that resize, crop
+            and re-encode images — such as photographs and signatures for
+            exam and government application forms — along with pages that
+            summarise the upload specifications published by exam bodies.
+            Use of the Site does not require an account or payment.
           </p>
 
-          <h2>3. Not insurance, financial, or legal advice</h2>
+          <h2>3. Not affiliated with any exam body</h2>
           <p>
-            Sharpmonk is not an insurance company, agent, broker, or
-            carrier. Nothing on the Site constitutes insurance, financial,
-            legal, or tax advice, nor an offer, application, or quote for
-            insurance coverage. Estimates produced by the calculator are
-            illustrative only — see the <Link href="/disclaimer">Disclaimer</Link>{" "}
-            for full detail.
+            Sharpmonk is independent and is not affiliated with, endorsed
+            by, or acting for IBPS, the National Testing Agency, or any
+            other examining or government body. Specifications on the Site
+            are summaries of public notifications and may be out of date;
+            the official notification for your exam always governs. You are
+            responsible for checking your files before you submit them — see
+            the <Link href="/disclaimer">Disclaimer</Link>.
           </p>
 
           <h2>4. Acceptable use</h2>
@@ -71,7 +73,7 @@ export default function TermsPage() {
 
           <h2>7. Disclaimer of warranties</h2>
           <p>
-            The Site and all calculators are provided &ldquo;as is&rdquo; and &ldquo;as
+            The Site and all tools are provided &ldquo;as is&rdquo; and &ldquo;as
             available,&rdquo; without warranties of any kind, express or implied,
             including accuracy, completeness, reliability, or fitness for a
             particular purpose. We do not warrant that the Site will be
@@ -84,8 +86,8 @@ export default function TermsPage() {
             operators shall not be liable for any indirect, incidental,
             special, consequential, or punitive damages, or any loss of
             profits or data, arising from your use of, or inability to use,
-            the Site — including decisions made based on calculator
-            estimates.
+            the Site — including a rejected or delayed application, or a
+            file that did not meet a specification.
           </p>
 
           <h2>9. Changes to these terms</h2>

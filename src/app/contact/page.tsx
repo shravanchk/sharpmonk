@@ -18,8 +18,9 @@ export default function ContactPage() {
           Get in touch
         </h1>
         <p className="text-muted mt-4 leading-relaxed">
-          Found a bug in the calculator, have a feature idea, or a question
-          about how an estimate was calculated? Send a message below.
+          Spotted a specification that has changed, want an exam added, or
+          had a file rejected? Send a message below — for a rejection, say
+          which exam and which upload, and paste the portal&apos;s error.
         </p>
 
         <div className="mt-10">

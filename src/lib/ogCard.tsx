@@ -1,12 +1,12 @@
 import { ImageResponse } from "next/og";
-import { GUIDES, TOOLS } from "./content";
+import { EXAM_ENTRIES, TOOLS } from "./content";
 
 /**
  * Shared renderer for per-page social share cards.
  *
  * Every route that wants its own card exports `size`/`contentType`/`alt` from
  * here and calls `ogCard(...)`, so the layout lives in one place and a new
- * calculator only needs the few lines of copy that differ.
+ * page only needs the few lines of copy that differ.
  *
  * Runs at build time (no request-time APIs), so it stays compatible with
  * `output: "export"` and ships as plain PNGs.
@@ -37,43 +37,35 @@ const MARK = `data:image/svg+xml;utf8,${encodeURIComponent(
 )}`;
 
 /**
- * Looks a route's card copy up from the shared content lists, so a card says
- * the same thing the page and the search index do, and a new calculator gets
- * correct copy from its `content.ts` entry alone.
+ * Looks a route's card copy up from the shared catalogue, so a card says the
+ * same thing the page does, and a new tool or exam gets a correct card from
+ * its catalogue entry alone.
  *
  * Throws on an unknown href rather than silently rendering a blank card — this
  * runs at build time, so a typo fails the build instead of shipping.
  */
 export function cardFor(href: string): OgCardInput {
   const tool = TOOLS.find((t) => t.href === href);
-  if (tool) {
-    return {
-      eyebrow: tool.cats.includes("india") ? "India · Calculator" : "Calculator",
-      title: tool.title,
-      subtitle: tool.body,
-    };
-  }
+  if (tool) return { eyebrow: "Precision tool", title: tool.title, subtitle: tool.body };
 
-  const guide = GUIDES.find((g) => g.href === href);
-  if (guide) {
-    return { eyebrow: `${guide.tag} · Guide`, title: guide.title, subtitle: guide.body };
-  }
+  const exam = EXAM_ENTRIES.find((e) => e.href === href);
+  if (exam) return { eyebrow: "Exam upload sizes", title: exam.title, subtitle: exam.body };
 
   throw new Error(
-    `ogCard: no content entry for "${href}". Add it to TOOLS or GUIDES in lib/content.ts, or pass copy explicitly.`,
+    `ogCard: no content entry for "${href}". Add it to TOOLS in lib/content.ts or an exam to lib/specs.ts, or pass copy explicitly.`,
   );
 }
 
 export type OgCardInput = {
-  /** Small label above the headline — the section, e.g. "Calculator". */
+  /** Small label above the headline — the section, e.g. "Precision tool". */
   eyebrow: string;
   title: string;
   subtitle: string;
-  /** Shown bottom-right, e.g. "Free · No signup". */
+  /** Shown bottom-right. */
   tag?: string;
 };
 
-export function ogCard({ eyebrow, title, subtitle, tag = "Free · No signup" }: OgCardInput) {
+export function ogCard({ eyebrow, title, subtitle, tag = "Free · Nothing uploaded" }: OgCardInput) {
   return new ImageResponse(
     (
       <div

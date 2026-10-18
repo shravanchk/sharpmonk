@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   alternates: { canonical: "/disclaimer" },
   title: "Disclaimer",
-  description: "Important limitations of the Sharpmonk insurance calculator and how its estimates should be used.",
+  description: "What Sharpmonk's exam specifications and resized files can and can't promise, and why the official notification always comes first.",
 };
 
 export default function DisclaimerPage() {
@@ -15,60 +15,49 @@ export default function DisclaimerPage() {
         <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Disclaimer</h1>
 
         <div className="prose-legal mt-10">
-          <h2>Estimates only — not a quote</h2>
+          <h2>The official notification comes first</h2>
           <p>
-            The <Link href="/calculator">Sharpmonk insurance calculator</Link>{" "}
-            produces an illustrative estimate using generic, publicly
-            understood rating factors (such as age bands, tobacco
-            surcharges, coverage tiers, deductible credits, and regional
-            risk multipliers). It does not use real-time rate tables from
-            any specific insurer, is not underwritten, and is not a
-            binding, formal, or informal quote.
+            Each exam page summarises the upload specifications in that
+            exam&apos;s official notification or information bulletin, and
+            links the document, the pages, and the date we read it. Exam
+            bodies revise these between cycles and sometimes mid-cycle. If
+            the notification for your exam says something different from
+            this Site, follow the notification.
           </p>
 
-          <h2>Not affiliated with any insurer</h2>
+          <h2>Not affiliated with any exam body</h2>
           <p>
-            Sharpmonk is not an insurance company, agent, broker, carrier,
-            or underwriter, and is not affiliated with, endorsed by, or
-            sponsored by any specific insurance provider. We do not sell
-            insurance policies.
+            Sharpmonk is independent. It is not affiliated with, endorsed
+            by, or acting on behalf of IBPS, the National Testing Agency, or
+            any other examining, recruiting or government body. Exam names
+            are used only to say which specification a page describes.
           </p>
 
-          <h2>Actual premiums will differ</h2>
+          <h2>Check your files before you submit</h2>
           <p>
-            Real insurance premiums depend on underwriting factors this
-            calculator does not and cannot access — including your exact
-            location, credit-based insurance score (where legally used),
-            detailed medical history, motor vehicle record, insurer-specific
-            pricing models, discounts, and state regulations. Actual quotes
-            from licensed insurers may be higher or lower than the estimate
-            shown.
+            The tools measure every file they produce — its pixel
+            dimensions, size in bytes, format and DPI — and show the result
+            before you download it. Even so, a portal may apply checks a
+            notification doesn&apos;t mention, or judge a photo&apos;s content
+            (face size, background, lighting) differently. It remains your
+            responsibility to confirm that each upload is accepted and is a
+            true image of you, your signature and your impressions.
           </p>
 
-          <h2>Not professional advice</h2>
+          <h2>Padded files</h2>
           <p>
-            Nothing on this Site constitutes insurance, financial, legal, or
-            tax advice. Before making any insurance, financial, or legal
-            decision, consult a licensed insurance agent, financial advisor,
-            or attorney qualified in your jurisdiction.
-          </p>
-
-          <h2>No guarantee of accuracy</h2>
-          <p>
-            While we aim for the calculator&apos;s methodology to be reasonable
-            and transparent (each result includes the exact factors and
-            multipliers used), we make no representation or warranty as to
-            the accuracy, completeness, or reliability of any estimate.
+            To meet a minimum file size, a file may contain a standard JPEG
+            comment block that does not change the image. This is explained
+            in full on <Link href="/how-it-works#padding">How it works</Link>.
           </p>
 
           <h2>Use at your own discretion</h2>
           <p>
-            Your use of the calculator and any reliance on its output is
-            entirely at your own risk. See the{" "}
-            <Link href="/terms">Terms of Service</Link> for the full
+            See the <Link href="/terms">Terms of Service</Link> for the full
             limitation of liability, and the{" "}
-            <Link href="/privacy">Privacy Policy</Link> for how information
-            on this Site is handled.
+            <Link href="/privacy">Privacy Policy</Link> for how this Site
+            handles information — in short, your images never leave your
+            device.
           </p>
         </div>
       </div>

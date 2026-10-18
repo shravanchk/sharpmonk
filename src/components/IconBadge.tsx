@@ -33,6 +33,19 @@ const COLOR: Record<IconName, string> = {
   link: "blue",
   printer: "indigo",
   search: "blue",
+  image: "blue",
+  pen: "violet",
+  fingerprint: "teal",
+  "file-text": "amber",
+  crop: "indigo",
+  rotate: "blue",
+  download: "green",
+  upload: "blue",
+  ruler: "amber",
+  alert: "rose",
+  x: "rose",
+  sparkle: "violet",
+  "eye-off": "green",
 };
 
 type Props = {

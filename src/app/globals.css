@@ -5,8 +5,8 @@
   --foreground: #eef2f9;
   --muted: #8c99b0;
 
-  /* Mesh palette — one cohesive blue/navy family. A professional,
-     insurance-grade "trust blue" scheme: no clashing yellow, no rainbow.
+  /* Mesh palette — one cohesive blue/navy family. A calm "trust blue"
+     scheme: no clashing yellow, no rainbow.
      Every blob now lives in the same hue neighbourhood so the backdrop
      reads as a single calm glow rather than four competing lights. */
   --mesh-1: #2f6fed;
@@ -527,7 +527,7 @@ body {
 [data-theme="light"] .icon-badge--pink { background: rgba(190, 24, 93, 0.1); color: #be185d; }
 
 /* ---------------------------------------------------------------
-   Forms — tabs, inputs, sliders (calculator UI)
+   Forms — tabs, inputs, sliders (tool UI)
    --------------------------------------------------------------- */
 
 .tab-btn {
@@ -607,7 +607,7 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   Calculator result reveal
+   Result reveal
    --------------------------------------------------------------- */
 
 .result-pop {
@@ -889,7 +889,7 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   Sliding tab indicator (see InsuranceCalculator.tsx)
+   Sliding tab indicator
    --------------------------------------------------------------- */
 
 .tab-indicator {
@@ -927,36 +927,6 @@ body {
 
 .accordion-chevron.is-open {
   transform: rotate(45deg);
-}
-
-/* ---------------------------------------------------------------
-   Embedded calculators (/embed/<slug>)
-   App Router allows one root layout, so the header, footer and
-   consent banner are already in the tree on those routes. The embed
-   layout marks its subtree and this strips the site chrome around
-   it, leaving a page that is nothing but the tool — which is what a
-   publisher framing it wants. See app/embed/[slug]/layout.tsx.
-   --------------------------------------------------------------- */
-
-body:has(.embed-root) > header,
-body:has(.embed-root) > footer,
-body:has(.embed-root) .consent-slide {
-  display: none;
-}
-
-/* The result panel sticks to the viewport on the canonical pages, where
-   there is a header to clear and a long page to scroll. In a frame there
-   is neither, and sticking it just detaches it from the form. */
-body:has(.embed-root) .glass-card.sticky {
-  position: static;
-}
-
-/* Both actions assume they own the window. "Copy link" would hand the
-   reader the bare chrome-less URL, and print() inside a frame prints the
-   host's page, not the estimate. The attribution link below the tool is
-   the route back to the real page. */
-body:has(.embed-root) .result-actions {
-  display: none;
 }
 
 /* ---------------------------------------------------------------

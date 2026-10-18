@@ -14,8 +14,8 @@ const ORGANIZATION = {
   url: SITE_URL,
   logo: `${SITE_URL}/icon-512.png`,
   description:
-    "Free, no-signup insurance calculators for the US and India — premium estimates, coverage needs, and cost comparisons with transparent math.",
-  sameAs: ["https://upaman.com"],
+    "Free, in-browser tools that resize exam photos and signatures to the exact pixels, file size and DPI each official notification specifies.",
+  sameAs: ["https://upaman.com", "https://railmonk.com"],
   founder: {
     "@type": "Person",
     name: "Shravan Cherukuri",

@@ -3,7 +3,7 @@
  * 24×24 grid with `currentColor` strokes so icons inherit text color and
  * theme automatically. Replaces the emoji that previously stood in for
  * icons across the site — consistent stroke weight reads far more
- * professional on a finance/insurance product.
+ * professional than emoji ever did.
  */
 
 export type IconName =
@@ -31,7 +31,20 @@ export type IconName =
   | "mail"
   | "link"
   | "printer"
-  | "search";
+  | "search"
+  | "image"
+  | "pen"
+  | "fingerprint"
+  | "file-text"
+  | "crop"
+  | "rotate"
+  | "download"
+  | "upload"
+  | "ruler"
+  | "alert"
+  | "x"
+  | "sparkle"
+  | "eye-off";
 
 const PATHS: Record<IconName, React.ReactNode> = {
   shield: <path d="M12 3 5 6v5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z" />,
@@ -148,6 +161,63 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <path d="M7 9V4.5h10V9" />
       <path d="M7 17.5H5.5A1.5 1.5 0 0 1 4 16v-5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a1.5 1.5 0 0 1-1.5 1.5H17" />
       <rect x="7" y="14" width="10" height="5.5" rx="1" />
+    </>
+  ),
+  image: (
+    <>
+      <rect x="4" y="5" width="16" height="14" rx="2" />
+      <circle cx="9" cy="10" r="1.6" />
+      <path d="m20 16-4.5-4.5L7 19" />
+    </>
+  ),
+  pen: (
+    <>
+      <path d="M15.5 5.5 18.5 8.5 9 18l-4 1 1-4 9.5-9.5Z" />
+      <path d="M4 21c3-1 5.5-.5 8 0s5 .5 8-1" />
+    </>
+  ),
+  fingerprint: (
+    <>
+      <path d="M8.5 19.5c1-2 1.5-4.2 1.5-6.5a2 2 0 0 1 4 0c0 2.6-.4 5-1.3 7.2" />
+      <path d="M5.6 16.5c.6-1.3.9-2.4.9-3.5a5.5 5.5 0 0 1 11 0c0 1.5-.1 2.9-.4 4.3" />
+      <path d="M4.2 10.5A8 8 0 0 1 19.5 9" />
+      <path d="M12 13c0 3-.7 5.7-2 8" />
+    </>
+  ),
+  "file-text": (
+    <>
+      <path d="M14 3.5H7.5A1.5 1.5 0 0 0 6 5v14a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 18 19V7.5l-4-4Z" />
+      <path d="M14 3.5v4h4M9 12h6M9 15.5h6M9 9h2" />
+    </>
+  ),
+  crop: <path d="M7 3v13a1 1 0 0 0 1 1h13M3 7h13a1 1 0 0 1 1 1v13" />,
+  rotate: (
+    <>
+      <path d="M19 12a7 7 0 1 1-2.05-4.95" />
+      <path d="M19 4v4h-4" />
+    </>
+  ),
+  download: <path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" />,
+  upload: <path d="M12 16V5m0 0L7.5 9.5M12 5l4.5 4.5M5 19.5h14" />,
+  ruler: (
+    <>
+      <path d="m3.5 15.5 12-12 5 5-12 12-5-5Z" />
+      <path d="m7.5 11.5 2 2M10.5 8.5l2 2M13.5 5.5l2 2" />
+    </>
+  ),
+  alert: (
+    <>
+      <path d="M12 4 2.8 19.5h18.4L12 4Z" />
+      <path d="M12 10v4.5M12 17.3v.2" />
+    </>
+  ),
+  x: <path d="M6 6l12 12M18 6 6 18" />,
+  sparkle: <path d="M12 3.5c.7 4.3 2.2 5.8 6.5 6.5-4.3.7-5.8 2.2-6.5 6.5-.7-4.3-2.2-5.8-6.5-6.5 4.3-.7 5.8-2.2 6.5-6.5ZM18.5 15.5c.3 1.6.9 2.2 2.5 2.5-1.6.3-2.2.9-2.5 2.5-.3-1.6-.9-2.2-2.5-2.5 1.6-.3 2.2-.9 2.5-2.5Z" />,
+  "eye-off": (
+    <>
+      <path d="M3 3l18 18" />
+      <path d="M10.6 6.1A9.8 9.8 0 0 1 12 6c5 0 8.5 4.5 9.5 6-.5.8-1.6 2.3-3.2 3.6M6.6 7.6C4.6 8.9 3.2 10.8 2.5 12c1 1.5 4.5 6 9.5 6 1.6 0 3-.4 4.3-1.1" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
     </>
   ),
   search: (

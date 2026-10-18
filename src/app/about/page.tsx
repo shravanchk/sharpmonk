@@ -5,49 +5,40 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
   title: "About Sharpmonk",
   description:
-    "Sharpmonk builds free, transparent calculators — starting with an insurance premium estimator that shows its math instead of hiding it behind a lead-gen form.",
+    "Sharpmonk sizes exam photos and signatures to the official specification, in your browser, with every figure traced to its notification.",
 };
 
 export default function AboutPage() {
   return (
     <main className="relative flex-1 px-6 py-16 sm:py-20">
       <div className="mx-auto max-w-3xl">
-        <span className="text-[var(--accent)] font-mono text-xs tracking-[0.18em] uppercase">
-          About
-        </span>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-          Why Sharpmonk exists
-        </h1>
+        <span className="text-[var(--accent)] font-mono text-xs tracking-[0.18em] uppercase">About</span>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Why Sharpmonk exists</h1>
 
         <div className="prose-legal mt-10">
           <p>
-            Most insurance &ldquo;calculators&rdquo; online are lead-generation forms in
-            disguise: enter your phone number to see a number, then field
-            calls from agents for a week. Sharpmonk started from a simpler
-            idea — show the estimate first, show the math behind it, and
-            never ask for contact information to do it.
+            Every year, millions of people applying for bank, medical, engineering and government exams hit the same wall:
+            the form won&apos;t accept their photo. It&apos;s 3 MB and the limit is 50 KB, or the signature is 6 KB and the
+            minimum is 10, or it&apos;s a PNG with a .jpg name. The usual fix is a resizer site that uploads your face and
+            signature to its server, wraps the result in ads, and quotes numbers copied from another resizer site.
           </p>
-
-          <h2>What the calculators actually do</h2>
+          <p>Sharpmonk does the job differently:</p>
+          <ul>
+            <li>
+              <strong>Exact.</strong> Files are built to the pixels, KB window and DPI the form asks for, and measured before
+              you download them — not estimated.
+            </li>
+            <li>
+              <strong>Sourced.</strong> Every exam page is built from the official notification, linked, with the page number and
+              the date it was checked.
+            </li>
+            <li>
+              <strong>Private.</strong> Resizing happens in your browser. There is no server for your images to go to.
+            </li>
+          </ul>
           <p>
-            <Link href="/calculators">Our free calculators</Link> apply
-            generic, publicly understood rating factors — age curves,
-            tobacco surcharges, deductible credits, regional risk
-            multipliers — to estimate premiums and coverage needs for life,
-            health, auto, home, renters, umbrella, and pet insurance in the
-            US, plus term, health, and motor insurance for{" "}
-            <Link href="/in">India</Link>. Every
-            input you change updates the estimate and its breakdown
-            instantly, entirely in your browser. Each calculator&apos;s page
-            includes a methodology panel showing the exact formula and
-            sources behind its number — see the{" "}
-            <Link href="/methodology">Methodology</Link> page for the
-            approach across all of them.
-          </p>
-          <p>
-            It is a budgeting and comparison-shopping aid, not a substitute
-            for a real quote. See the <Link href="/disclaimer">disclaimer</Link>{" "}
-            for the full picture of what these tools are and aren&apos;t.
+            <Link href="/how-it-works">How it works</Link> explains each step, including the one that surprises people: how a file
+            too small for a portal&apos;s minimum is brought up to it.
           </p>
 
           <h2>Who&apos;s behind it</h2>
@@ -56,30 +47,24 @@ export default function AboutPage() {
             <a href="https://www.linkedin.com/in/ch-shravan-kumar-b6a89974/" target="_blank" rel="noopener noreferrer">
               Shravan Cherukuri
             </a>
-            , a software engineer, as an independent, self-funded project. It
-            is a sister site to <a href="https://upaman.com">Upaman</a> — a
-            decision-first platform of free financial calculators, workflows,
-            and guides by the same maker. If these insurance tools were useful,
-            the <a href="https://upaman.com">Upaman calculators</a> cover
-            paychecks, loans, tax, compound interest, and long-term savings.
+            , a software engineer, as an independent, self-funded project. The same maker runs two sister sites with the same
+            approach — work from the official rules, and show the working:
           </p>
-          <p>
-            Sharpmonk is not an insurance company, agent, broker, or carrier,
-            and we don&apos;t sell your information to one. The site is
-            supported by display advertising, which is disclosed in the{" "}
-            <Link href="/privacy">Privacy Policy</Link>.
-          </p>
+          <ul>
+            <li>
+              <a href="https://upaman.com">Upaman</a> — financial calculators for loans, tax, savings and investing.
+            </li>
+            <li>
+              <a href="https://railmonk.com">Railmonk</a> — IRCTC cancellation refunds, Tatkal timings and waitlist tools, built
+              on the published railway rules.
+            </li>
+          </ul>
 
-          <h2>What&apos;s next</h2>
+          <h2>Which exams are next</h2>
           <p>
-            Insurance is the first category. More free, transparent
-            calculators are planned — the goal is the same each time: real
-            math, shown in the open, with no form to unlock it.
-          </p>
-
-          <h2>Questions or feedback</h2>
-          <p>
-            Reach out any time via the <Link href="/contact">contact page</Link>.
+            Exams are added one at a time, only after reading the official notification. If yours isn&apos;t listed yet, the{" "}
+            <Link href="/resize-image-to-kb">resize-to-KB tool</Link> takes any numbers in the meantime — and{" "}
+            <Link href="/contact">tell us</Link> which exam to add.
           </p>
         </div>
       </div>

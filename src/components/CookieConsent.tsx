@@ -45,7 +45,7 @@ export default function CookieConsent() {
       <div className="mx-auto flex max-w-3xl flex-col gap-4 rounded-2xl border border-[var(--line-strong)] bg-[var(--background)] p-5 shadow-2xl shadow-black/50 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm leading-relaxed text-[var(--foreground)]/85">
           We use cookies for personalised advertising via Google AdSense.
-          Declining keeps the site fully usable &mdash; every calculator still
+          Declining keeps the site fully usable &mdash; every tool still
           runs entirely in your browser. See our{" "}
           <Link href="/privacy" className="text-[var(--accent)] underline underline-offset-2">
             Privacy Policy
