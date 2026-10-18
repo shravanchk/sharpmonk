@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { EXAM_ENTRIES, TOOLS } from "./content";
 import { STRINGS } from "./i18n";
+import { logoSvg } from "./logo";
 
 /**
  * Shared renderer for per-page social share cards.
@@ -28,14 +29,7 @@ const ACCENT = "#5b8def";
 const GOLD = "#f4bb2b";
 
 /** The brand mark, inlined as a data URI — satori renders SVG through <img>. */
-const MARK = `data:image/svg+xml;utf8,${encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <rect x="2" y="2" width="96" height="96" rx="24" fill="#17325c"/>
-    <path d="M50 21C39 21 30 30 29 42L28.5 53C19.5 58.5 14 68.5 13 79C12.5 83.3 15.9 86.5 20 86.5H80C84.1 86.5 87.5 83.3 87 79C86 68.5 80.5 58.5 71.5 53L71 42C70 30 61 21 50 21Z" fill="#ffffff"/>
-    <path d="M50 32c-6.6 0-12 5.4-12 12v5c0 6.6 5.4 12 12 12s12-5.4 12-12v-5c0-6.6-5.4-12-12-12Z" fill="#17325c"/>
-    <path d="M35.5 13.5a14.5 4.2 0 0 1 29 0" stroke="#f4bb2b" stroke-width="3.6" fill="none" stroke-linecap="round"/>
-  </svg>`,
-)}`;
+const MARK = `data:image/svg+xml;utf8,${encodeURIComponent(logoSvg())}`;
 
 /**
  * Looks a route's card copy up from the shared catalogue, so a card says the
