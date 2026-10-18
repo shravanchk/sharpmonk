@@ -41,7 +41,7 @@ export default function Page() {
         <div className="mesh-blob mesh-blob-3" />
       </div>
 
-      <section className="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:py-20">
+      <section className="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:py-20">
         <div className="flex flex-col">
           <span className="text-muted inline-flex w-fit items-center gap-2 rounded-full border border-[var(--line-strong)] bg-[var(--surface-1)] px-4 py-1.5 text-xs">
             <Icon name="lock" size={13} />
@@ -79,7 +79,7 @@ export default function Page() {
                     <IconBadge name="image" size={20} badgeSize="sm" className="shrink-0" />
                     <span className="min-w-0 flex-1">
                       <span className="block font-medium group-hover:text-[var(--accent)]">{e.short}</span>
-                      <span className="text-muted block truncate text-xs">
+                      <span className="text-muted block text-xs sm:truncate">
                         {e.docs.length} अपलोड
                         {photo ? ` · फ़ोटो ${photo.statedPx ? `${photo.width}×${photo.height}, ` : ""}${kbRange(photo)}` : ""}
                       </span>

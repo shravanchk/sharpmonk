@@ -865,4 +865,6 @@ export function longDate(iso: string) {
 }
 
 /** "20–50 KB" */
-export const kbRange = (d: Pick<DocSpec, "minKB" | "maxKB">) => `${d.minKB}–${d.maxKB} KB`;
+/** "20–50 KB". A word joiner after the dash and a non-breaking space before
+ *  the unit keep the whole range on one line. */
+export const kbRange = (d: Pick<DocSpec, "minKB" | "maxKB">) => `${d.minKB}–\u2060${d.maxKB}\u00a0KB`;

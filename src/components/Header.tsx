@@ -40,9 +40,9 @@ export default function Header() {
   const t = STRINGS[lang];
   const NAV_LINKS = navLinks(lang);
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(
-    () => typeof window !== "undefined" && window.scrollY > 8,
-  );
+  // Starts false on both server and client, so hydration matches even when
+  // the browser restores a scrolled position; the effect below syncs it.
+  const [scrolled, setScrolled] = useState(false);
 
   // Close the mobile menu on route change — adjust state during render
   // instead of in an effect (see https://react.dev/learn/you-might-not-need-an-effect).
@@ -54,8 +54,12 @@ export default function Header() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
+    const first = requestAnimationFrame(onScroll);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      cancelAnimationFrame(first);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   // While the drawer is up it owns the screen: freeze the page behind it and
