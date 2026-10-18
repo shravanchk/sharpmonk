@@ -49,6 +49,7 @@ const kbSpan = (min: number, max: number, under: string, between: (a: number, b:
 
 const en = {
   langName: "English",
+  tagline: "Exam uploads, exactly right",
   switchTo: "हिन्दी",
   nav: {
     home: ["Home", "Start here"],
@@ -248,6 +249,7 @@ export type Strings = typeof en;
 
 const hi: Strings = {
   langName: "हिन्दी",
+  tagline: "परीक्षा अपलोड, बिल्कुल सही साइज़ में",
   switchTo: "English",
   nav: {
     home: ["होम", "यहाँ से शुरू करें"],

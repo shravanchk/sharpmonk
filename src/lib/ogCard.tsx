@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { EXAM_ENTRIES, TOOLS } from "./content";
+import { STRINGS } from "./i18n";
 
 /**
  * Shared renderer for per-page social share cards.
@@ -111,7 +112,10 @@ export function ogCard({ eyebrow, title, subtitle, tag = "Free · Nothing upload
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={MARK} width={64} height={64} alt="" />
-          <span style={{ fontSize: 34, color: WHITE, letterSpacing: -0.5 }}>Sharpmonk</span>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: 34, color: WHITE, letterSpacing: -0.5 }}>Sharpmonk</span>
+            <span style={{ fontSize: 20, color: MUTED, marginTop: 2 }}>{STRINGS.en.tagline}</span>
+          </div>
         </div>
 
         {/* Headline block */}

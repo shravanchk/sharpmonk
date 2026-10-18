@@ -63,6 +63,7 @@ export default function Footer() {
               <MonkMark size={26} />
               Sharpmonk
             </span>
+            <p className="mt-2 text-sm font-medium text-[var(--accent)]">{STRINGS[lang].tagline}</p>
             <p className="text-muted mt-3 max-w-xs text-sm leading-relaxed">{f.blurb}</p>
             <ul className="mt-5 flex max-w-xs flex-col gap-3">
               {SISTERS.map((s) => (

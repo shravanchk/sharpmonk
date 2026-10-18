@@ -103,7 +103,14 @@ export default function Header() {
             className="flex shrink-0 items-center gap-2.5 font-mono text-base font-semibold tracking-tight text-[var(--foreground)] transition-opacity hover:opacity-80 sm:text-lg"
           >
             <MonkMark size={28} />
-            Sharpmonk
+            {/* The tagline says what the name doesn't. Hidden on phones and at
+                lg, where the bar has no room; back from xl. */}
+            <span className="flex flex-col leading-none">
+              Sharpmonk
+              <span className="text-muted mt-1 hidden font-sans text-[11px] font-normal tracking-normal sm:block lg:hidden xl:block">
+                {t.tagline}
+              </span>
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-1 lg:flex">

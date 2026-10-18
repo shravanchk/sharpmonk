@@ -15,6 +15,7 @@ const ORGANIZATION = {
   logo: `${SITE_URL}/icon-512.png`,
   description:
     "Free, in-browser tools that resize exam photos and signatures to the exact pixels, file size and DPI each official notification specifies.",
+  slogan: "Exam uploads, exactly right.",
   sameAs: ["https://upaman.com", "https://railmonk.com"],
   founder: {
     "@type": "Person",
