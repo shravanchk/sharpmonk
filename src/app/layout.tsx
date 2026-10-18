@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 const siteUrl = "https://sharpmonk.com";
 const title = "Sharpmonk — Exam Photo & Signature Resizer, to the Exact KB";
 const description =
-  "Resize exam photos, signatures and thumb impressions to the exact pixels, KB and DPI in the official notification — IBPS, NEET, JEE. Runs in your browser; nothing is uploaded.";
+  "Resize exam photos, signatures and thumb impressions to the exact pixels, KB and DPI in the official notification — UPSC, SSC, RRB, IBPS, SBI, NEET, JEE. Runs in your browser; nothing is uploaded.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

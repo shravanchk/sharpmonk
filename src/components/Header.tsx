@@ -11,7 +11,7 @@ type NavLink = { href: string; label: string; icon: IconName; hint: string };
 
 const NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home", icon: "home", hint: "Start here" },
-  { href: "/exams", label: "Exams", icon: "clipboard", hint: "IBPS, NEET, JEE upload sizes" },
+  { href: "/exams", label: "Exams", icon: "clipboard", hint: "UPSC, SSC, IBPS, SBI, NEET & more" },
   { href: "/resize-image-to-kb", label: "Resize to KB", icon: "ruler", hint: "Any size window, any pixels" },
   { href: "/signature-resize", label: "Signature", icon: "pen", hint: "Clean ink on white paper" },
   { href: "/how-it-works", label: "How it works", icon: "info", hint: "Privacy, KB maths, padding" },

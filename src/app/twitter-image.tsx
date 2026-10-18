@@ -8,7 +8,7 @@ export { size, contentType };
 
 export default function Image() {
   return ogCard({
-    eyebrow: "IBPS · NEET · JEE",
+    eyebrow: "UPSC · SSC · IBPS · SBI · NEET · JEE",
     title: "Exam photo & signature, sized exactly",
     subtitle: "The pixels, KB and DPI from the official notification. Runs in your browser.",
   });

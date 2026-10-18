@@ -6,7 +6,7 @@ import FAQAccordion from "@/components/FAQAccordion";
 import Icon from "@/components/Icon";
 import ToolSchema from "@/components/ToolSchema";
 import ExamWorkbench from "@/components/tool/ExamWorkbench";
-import { EXAMS, examBySlug, kbRange, longDate, type ExamSpec } from "@/lib/specs";
+import { EXAMS, examBySlug, kbRange, longDate, pxLabel, uploadsLabel, type ExamSpec } from "@/lib/specs";
 
 export function generateStaticParams() {
   return EXAMS.map((e) => ({ slug: e.slug }));
@@ -15,8 +15,10 @@ export function generateStaticParams() {
 function describe(e: ExamSpec) {
   const photo = e.docs.find((d) => d.kind === "photo");
   const sig = e.docs.find((d) => d.kind === "signature");
-  const part = (d: typeof photo, name: string) =>
-    d ? `${name} ${d.statedPx ? `${d.width}×${d.height} px, ` : ""}${kbRange(d)}` : null;
+  const part = (d: typeof photo, name: string) => {
+    const px = d && pxLabel(d);
+    return d ? `${name} ${px ? `${px} px, ` : ""}${kbRange(d)}` : null;
+  };
   return `${e.short} upload sizes from the official notification: ${[part(photo, "photo"), part(sig, "signature")].filter(Boolean).join("; ")}. Resize yours to fit exactly — in your browser, nothing uploaded.`;
 }
 
@@ -24,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const e = examBySlug(slug);
   if (!e) return {};
-  const title = `${e.short} Photo & Signature Size — Exact Resizer`;
+  const title = `${e.short} ${uploadsLabel(e) === "signature" ? "Signature" : "Photo & Signature"} Size — Exact Resizer`;
   const description = describe(e);
   const path = `/exams/${e.slug}`;
   return {
@@ -45,7 +47,7 @@ export default async function ExamPage({ params }: { params: Promise<{ slug: str
 
   return (
     <main className="relative mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-      <ToolSchema name={`${e.short} photo & signature resizer`} path={path} description={describe(e)} />
+      <ToolSchema name={`${e.short} ${uploadsLabel(e)} resizer`} path={path} description={describe(e)} />
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },
@@ -57,7 +59,7 @@ export default async function ExamPage({ params }: { params: Promise<{ slug: str
       <header className="max-w-3xl">
         <span className="font-mono text-xs tracking-[0.16em] text-[var(--accent)] uppercase">{e.conductedBy}</span>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
-          {e.short} photo & signature resizer
+          {e.short} {uploadsLabel(e)} resizer
         </h1>
         <p className="text-muted mt-4 text-lg leading-relaxed">{e.summary}</p>
         <p className="mt-4 inline-flex flex-wrap items-center gap-x-2 gap-y-1 rounded-full border border-[var(--line-strong)] bg-[var(--surface-1)] px-4 py-1.5 text-xs">
@@ -97,11 +99,14 @@ export default async function ExamPage({ params }: { params: Promise<{ slug: str
                         {d.statedPx.qualifier && <span className="text-muted"> ({d.statedPx.qualifier})</span>}
                       </>
                     ) : (
-                      <span className="text-muted">Not specified</span>
+                      (d.statedPxText ?? <span className="text-muted">Not specified</span>)
                     )}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">{kbRange(d)}</td>
-                  <td className="px-4 py-3">{d.dpi ?? <span className="text-muted">—</span>}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {d.dpi ?? <span className="text-muted">—</span>}
+                    {d.dpiStated && <span className="text-muted"> ({d.dpiStated})</span>}
+                  </td>
                   <td className="px-4 py-3 whitespace-nowrap">JPG / JPEG</td>
                 </tr>
               ))}
@@ -179,7 +184,7 @@ export default async function ExamPage({ params }: { params: Promise<{ slug: str
                 {others.map((o) => (
                   <li key={o.slug}>
                     <Link href={`/exams/${o.slug}`} className="text-[var(--accent)] hover:underline">
-                      {o.short} photo & signature
+                      {o.short} {uploadsLabel(o)}
                     </Link>
                   </li>
                 ))}

@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Icon from "@/components/Icon";
-import { EXAMS, kbRange, longDate } from "@/lib/specs";
+import { EXAMS, kbRange, longDate, pxLabel } from "@/lib/specs";
 
 const TITLE = "Exam Photo & Signature Sizes — From the Official Notifications";
 const DESCRIPTION =
-  "Photo, signature, thumb impression and declaration sizes for IBPS PO, NEET UG and JEE Main, read from each official notification and dated — with a resizer for each.";
+  "Photo, signature, thumb impression and declaration sizes for UPSC, SSC, RRB, IBPS, SBI, NEET and JEE exams, read from each official notification and dated — with a resizer for each.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -41,7 +41,7 @@ export default function ExamsPage() {
                 <li key={d.kind} className="flex justify-between gap-3">
                   <span className="text-muted">{d.label}</span>
                   <span className="shrink-0 text-right font-medium">
-                    {d.statedPx ? `${d.width}×${d.height} · ` : ""}
+                    {pxLabel(d) ? `${pxLabel(d)} · ` : ""}
                     {kbRange(d)}
                   </span>
                 </li>

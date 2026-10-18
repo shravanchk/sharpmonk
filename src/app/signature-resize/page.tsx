@@ -97,10 +97,8 @@ export default function SignatureResizePage() {
           <FAQAccordion items={FAQS} />
         </div>
         <p className="text-muted mt-8 text-sm leading-relaxed">
-          Doing a full application? The <Link href="/exams/ibps-po" className="text-[var(--accent)] hover:underline">IBPS PO</Link>,{" "}
-          <Link href="/exams/neet-ug" className="text-[var(--accent)] hover:underline">NEET UG</Link> and{" "}
-          <Link href="/exams/jee-main" className="text-[var(--accent)] hover:underline">JEE Main</Link> pages size every upload
-          at once.
+          Doing a full application? The <Link href="/exams" className="text-[var(--accent)] hover:underline">exam pages</Link> —
+          IBPS, SBI, UPSC, SSC, RRB NTPC, NEET UG and JEE Main — size every upload at once.
         </p>
       </article>
     </main>

@@ -97,7 +97,7 @@ export default function Home() {
                     <span className="min-w-0 flex-1">
                       <span className="block font-medium group-hover:text-[var(--accent)]">{e.short}</span>
                       <span className="text-muted block truncate text-xs">
-                        {e.docs.length} uploads
+                        {e.docs.length} upload{e.docs.length === 1 ? "" : "s"}
                         {photo ? ` · photo ${photo.statedPx ? `${photo.width}×${photo.height}, ` : ""}${kbRange(photo)}` : ""}
                       </span>
                     </span>

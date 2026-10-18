@@ -1,5 +1,5 @@
 import type { IconName } from "@/components/Icon";
-import { EXAMS } from "./specs";
+import { EXAMS, uploadsLabel } from "./specs";
 
 /**
  * The site's catalogue: one entry per page that does something. The home
@@ -26,7 +26,7 @@ export const TOOLS: Entry[] = [
 
 export const EXAM_ENTRIES: Entry[] = EXAMS.map((e) => ({
   href: `/exams/${e.slug}`,
-  title: `${e.short} photo & signature`,
+  title: `${e.short} ${uploadsLabel(e)}`,
   body: e.summary,
   icon: "image",
 }));
