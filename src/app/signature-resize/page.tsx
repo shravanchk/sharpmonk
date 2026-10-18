@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import { alternates } from "@/lib/i18n";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQAccordion from "@/components/FAQAccordion";
 import ToolSchema from "@/components/ToolSchema";
-import PrecisionTool, { type Preset } from "@/components/tool/PrecisionTool";
-import { examBySlug } from "@/lib/specs";
-import type { ToolConfig } from "@/lib/toolConfig";
+import PrecisionTool from "@/components/tool/PrecisionTool";
+import { SIGNATURE_INITIAL, SIGNATURE_PRESETS } from "@/lib/toolPresets";
 
 const PATH = "/signature-resize";
 const TITLE = "Signature Resize — Clean, Exact Pixels & KB";
@@ -15,33 +15,11 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: PATH },
+  alternates: alternates(PATH, "en"),
   openGraph: { title: TITLE, description: DESCRIPTION, url: PATH, type: "website" },
   twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
 };
 
-// Presets come straight from the verified exam specs, so this page can never
-// drift from the exam pages.
-const ibps = examBySlug("ibps-po")!.docs.find((d) => d.kind === "signature")!;
-const nta = examBySlug("neet-ug")!.docs.find((d) => d.kind === "signature")!;
-
-const INITIAL: ToolConfig = {
-  label: "Signature",
-  sizeMode: "exact",
-  width: ibps.width,
-  height: ibps.height,
-  maxLongSide: 600,
-  minKB: ibps.minKB,
-  maxKB: ibps.maxKB,
-  fit: "contain",
-  cleanInk: true,
-  fileName: "signature",
-};
-
-const PRESETS: Preset[] = [
-  { label: `IBPS PO · ${ibps.width}×${ibps.height} · ${ibps.minKB}–${ibps.maxKB} KB`, config: { width: ibps.width, height: ibps.height, minKB: ibps.minKB, maxKB: ibps.maxKB, dpi: undefined } },
-  { label: `NEET UG / JEE Main · ${nta.minKB}–${nta.maxKB} KB`, config: { width: nta.width, height: nta.height, minKB: nta.minKB, maxKB: nta.maxKB, dpi: undefined } },
-];
 
 const FAQS = [
   {
@@ -79,10 +57,10 @@ export default function SignatureResizePage() {
 
       <section aria-label="Signature resizer" className="glass-card mt-8 rounded-3xl p-4 sm:p-7">
         <PrecisionTool
-          initial={INITIAL}
+          initial={SIGNATURE_INITIAL}
           editable
-          presets={PRESETS}
-          what="a photo of your signature"
+          presets={SIGNATURE_PRESETS}
+          what="signature"
           tip={
             <p className="text-muted text-xs leading-relaxed">
               Crop close: zoom in until the signature fills most of the frame, with a little white around it.

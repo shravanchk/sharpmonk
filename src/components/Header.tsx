@@ -6,24 +6,39 @@ import { useEffect, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import MonkMark from "./MonkMark";
 import Icon, { type IconName } from "./Icon";
+import { STRINGS, basePath, hasHindi, langFromPath, localHref, type Lang } from "@/lib/i18n";
 
 type NavLink = { href: string; label: string; icon: IconName; hint: string };
 
-const NAV_LINKS: NavLink[] = [
-  { href: "/", label: "Home", icon: "home", hint: "Start here" },
-  { href: "/exams", label: "Exams", icon: "clipboard", hint: "UPSC, SSC, IBPS, SBI, NEET & more" },
-  { href: "/resize-image-to-kb", label: "Resize to KB", icon: "ruler", hint: "Any size window, any pixels" },
-  { href: "/signature-resize", label: "Signature", icon: "pen", hint: "Clean ink on white paper" },
-  { href: "/how-it-works", label: "How it works", icon: "info", hint: "Privacy, KB maths, padding" },
-];
+function navLinks(lang: Lang): NavLink[] {
+  const n = STRINGS[lang].nav;
+  const items: [string, IconName, string[]][] = [
+    ["/", "home", n.home],
+    ["/exams", "clipboard", n.exams],
+    ["/resize-image-to-kb", "ruler", n.kb],
+    ["/signature-resize", "pen", n.signature],
+    ["/compress-pdf-to-kb", "file-text", n.pdf],
+    ["/how-it-works", "info", n.how],
+  ];
+  return items.map(([href, icon, [label, hint]]) => ({ href: localHref(lang, href), icon, label, hint }));
+}
+
+/** The same page in the other language, or that language's home page. */
+function switchHref(pathname: string, lang: Lang) {
+  if (lang === "hi") return basePath(pathname);
+  return hasHindi(pathname) ? localHref("hi", pathname) : "/hi";
+}
 
 // Match the section, not the prefix — a bare `startsWith` would light up a
 // link for any unrelated route that merely shares its first letters.
 const isActive = (pathname: string, href: string) =>
-  href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+  href === "/" || href === "/hi" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 
 export default function Header() {
   const pathname = usePathname();
+  const lang = langFromPath(pathname);
+  const t = STRINGS[lang];
+  const NAV_LINKS = navLinks(lang);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(
     () => typeof window !== "undefined" && window.scrollY > 8,
@@ -84,7 +99,7 @@ export default function Header() {
       >
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:px-6 lg:h-[72px]">
           <Link
-            href="/"
+            href={localHref(lang, "/")}
             className="flex shrink-0 items-center gap-2.5 font-mono text-base font-semibold tracking-tight text-[var(--foreground)] transition-opacity hover:opacity-80 sm:text-lg"
           >
             <MonkMark size={28} />
@@ -112,19 +127,27 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-2 lg:gap-3">
+            <Link
+              href={switchHref(pathname, lang)}
+              hrefLang={lang === "hi" ? "en" : "hi"}
+              lang={lang === "hi" ? "en" : "hi"}
+              className="text-muted rounded-full border border-[var(--line-strong)] bg-[var(--surface-1)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]"
+            >
+              {t.switchTo}
+            </Link>
             <ThemeToggle />
 
             {/* Only from xl: at lg the nav already fills the bar. */}
             <Link
-              href="/exams"
+              href={localHref(lang, "/exams")}
               className="btn-glow hidden rounded-full px-5 py-2 text-sm font-medium xl:inline-flex"
             >
-              Find your exam
+              {t.nav.cta}
             </Link>
 
             <button
               type="button"
-              aria-label={open ? "Close menu" : "Open menu"}
+              aria-label={open ? t.nav.closeMenu : t.nav.openMenu}
               aria-expanded={open}
               aria-controls="mobile-nav"
               onClick={() => setOpen((v) => !v)}
@@ -191,10 +214,10 @@ export default function Header() {
 
             <div className="mt-3 border-t border-[var(--line)] pt-3">
               <Link
-                href="/exams"
+                href={localHref(lang, "/exams")}
                 className="btn-glow flex min-h-12 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold"
               >
-                Find your exam
+                {t.nav.cta}
                 <Icon name="arrow-right" size={16} />
               </Link>
             </div>

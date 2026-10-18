@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { alternates } from "@/lib/i18n";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Icon from "@/components/Icon";
@@ -11,7 +12,7 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: "/exams" },
+  alternates: alternates("/exams", "en"),
   openGraph: { title: TITLE, description: DESCRIPTION, url: "/exams", type: "website" },
 };
 

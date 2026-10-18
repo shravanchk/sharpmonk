@@ -10,7 +10,10 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Sharpmonk",
     description:
       "Resize exam photos and signatures to the exact pixels, KB and DPI the official notification asks for. Nothing is uploaded.",
+    id: "/",
     start_url: "/",
+    scope: "/",
+    categories: ["utilities", "education", "productivity"],
     display: "standalone",
     background_color: "#05070d",
     theme_color: "#17325c",

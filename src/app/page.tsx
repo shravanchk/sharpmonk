@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { alternates } from "@/lib/i18n";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import Icon, { type IconName } from "@/components/Icon";
@@ -7,7 +8,7 @@ import { TOOLS } from "@/lib/content";
 import { EXAMS, kbRange, longDate } from "@/lib/specs";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/" },
+  alternates: alternates("/", "en"),
 };
 
 /** The reasons uploads actually bounce — each one something the tools fix. */

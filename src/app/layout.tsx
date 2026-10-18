@@ -8,6 +8,7 @@ import CookieConsent from "@/components/CookieConsent";
 import AdSenseLoader from "@/components/AdSenseLoader";
 import Analytics from "@/components/Analytics";
 import SiteStructuredData from "@/components/SiteStructuredData";
+import ServiceWorker from "@/components/ServiceWorker";
 import { themeInitScript } from "@/lib/theme";
 
 const geistSans = Geist({
@@ -63,6 +64,7 @@ export default function RootLayout({
         <CookieConsent />
         <AdSenseLoader />
         <Analytics />
+        <ServiceWorker />
       </body>
     </html>
   );

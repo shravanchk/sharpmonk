@@ -66,6 +66,8 @@ export type ExamSpec = {
   docs: DocSpec[];
   /** Uploads the portal also asks for that these tools don't produce. */
   alsoRequired: string[];
+  /** A PDF upload the notification sizes, which the PDF compressor can make. */
+  pdf?: { label: string; minKB: number; maxKB: number };
   faqs: { q: string; a: string }[];
 };
 
@@ -258,6 +260,7 @@ export const EXAMS: ExamSpec[] = [
         fileName: "declaration",
       },
     ],
+    pdf: { label: "10th-standard certificate", minKB: 0, maxKB: 500 },
     alsoRequired: [
       "A live photograph, captured in the form by webcam or by scanning a QR code with your phone. It is in addition to the uploaded photo above.",
       "10th-standard (SSC/SSLC) certificate as an A4 PDF of at most 500 KB.",
@@ -359,6 +362,7 @@ export const EXAMS: ExamSpec[] = [
         fileName: "finger-thumb-impressions",
       },
     ],
+    pdf: { label: "Certificates", minKB: 50, maxKB: 300 },
     alsoRequired: [
       "A live photograph captured in the form by webcam or a QR code on your phone. It is matched against your Aadhaar photo.",
       "Certificates (Class X, category, address proof and others) as PDFs of 50–300 KB each.",
@@ -434,6 +438,7 @@ export const EXAMS: ExamSpec[] = [
         fileName: "signature",
       },
     ],
+    pdf: { label: "Class 10 certificate", minKB: 50, maxKB: 300 },
     alsoRequired: [
       "A live photograph captured in the form by webcam or a QR code on your phone.",
       "Class 10 certificate or marks sheet as a PDF of 50–300 KB.",
@@ -514,6 +519,7 @@ export const EXAMS: ExamSpec[] = [
         fileName: "signature",
       },
     ],
+    pdf: { label: "Matriculation certificate", minKB: 50, maxKB: 300 },
     alsoRequired: [
       "A live photograph captured while filling the Common Application Form, in addition to the uploaded photo.",
       "Your photo ID (Aadhaar or another) as a JPG of 20–200 KB, and the matriculation certificate as a PDF of 50–300 KB.",
@@ -642,6 +648,7 @@ export const EXAMS: ExamSpec[] = [
       declaration:
         "I, ____ (Name of the candidate), hereby declare that all the information submitted by me in the application form is correct, true and valid. I will present the supporting documents as and when required.",
     }),
+    pdf: { label: "10th-standard certificate", minKB: 0, maxKB: 500 },
     alsoRequired: [
       "A live photograph, captured in the form by webcam or by scanning a QR code with your phone. It is in addition to the uploaded photo above.",
       "10th-standard (SSC/SSLC) certificate as an A4 PDF of at most 500 KB, and the certificate under Clause K (ix) if it applies to you.",
@@ -684,6 +691,7 @@ export const EXAMS: ExamSpec[] = [
       declaration:
         "I, ____ (Name of the candidate), hereby declare that all the information submitted by me in the application form is correct, true and valid. I will submit the supporting documents as and when required.",
     }),
+    pdf: { label: "10th-standard certificate", minKB: 0, maxKB: 500 },
     alsoRequired: [
       "A live photograph, captured in the form by webcam or by scanning a QR code with your phone. It is in addition to the uploaded photo above.",
       "10th-standard (SSC/SSLC) certificate as an A4 PDF of at most 500 KB, plus the certificate or UDID card under Clause J (ix) and the certificate under Clause J (x) if they apply to you.",
@@ -749,6 +757,7 @@ export const EXAMS: ExamSpec[] = [
         fileName: "signature",
       },
     ],
+    pdf: { label: "SC/ST certificate", minKB: 0, maxKB: 400 },
     alsoRequired: [
       "No photo upload. A live photograph is captured in the form by webcam or your phone's front camera, against a plain white background in non-white clothes, head filling at least half the frame, with no cap, mask or glasses.",
       "SC/ST candidates who want the free railway travel pass upload their SC/ST certificate as a PDF under 400 KB.",

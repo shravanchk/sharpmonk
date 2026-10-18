@@ -22,6 +22,18 @@ export const TOOLS: Entry[] = [
     body: "Turn a phone photo of your signature into clean dark ink on white paper, at the exact pixels and KB a form asks for.",
     icon: "pen",
   },
+  {
+    href: "/compress-pdf-to-kb",
+    title: "Compress PDF to KB",
+    body: "Shrink a scanned certificate into the window a form asks for — 50–300 KB, under 500 KB — as clean A4 pages.",
+    icon: "file-text",
+  },
+  {
+    href: "/image-to-pdf",
+    title: "Image to PDF",
+    body: "Turn phone photos of a document into one A4 PDF, under the size limit, with the paper cleaned up.",
+    icon: "image",
+  },
 ];
 
 export const EXAM_ENTRIES: Entry[] = EXAMS.map((e) => ({

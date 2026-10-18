@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { alternates } from "@/lib/i18n";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQAccordion from "@/components/FAQAccordion";
 import ToolSchema from "@/components/ToolSchema";
-import PrecisionTool, { type Preset } from "@/components/tool/PrecisionTool";
+import PrecisionTool from "@/components/tool/PrecisionTool";
 import { EXAM_ENTRIES } from "@/lib/content";
-import type { ToolConfig } from "@/lib/toolConfig";
+import { RESIZE_INITIAL, resizePresets } from "@/lib/toolPresets";
 
 const PATH = "/resize-image-to-kb";
 const TITLE = "Resize Image to KB — Exact Size, Any Window";
@@ -15,33 +16,12 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: PATH },
+  alternates: alternates(PATH, "en"),
   openGraph: { title: TITLE, description: DESCRIPTION, url: PATH, type: "website" },
   twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
 };
 
-const INITIAL: ToolConfig = {
-  label: "Image",
-  sizeMode: "auto",
-  width: 600,
-  height: 800,
-  maxLongSide: 1600,
-  minKB: 0,
-  maxKB: 50,
-  fit: "cover",
-  cleanInk: false,
-  fileName: "resized",
-};
 
-const PRESETS: Preset[] = [
-  { label: "Under 20 KB", config: { minKB: 0, maxKB: 20 } },
-  { label: "Under 50 KB", config: { minKB: 0, maxKB: 50 } },
-  { label: "Under 100 KB", config: { minKB: 0, maxKB: 100 } },
-  { label: "Under 200 KB", config: { minKB: 0, maxKB: 200 } },
-  { label: "Under 500 KB", config: { minKB: 0, maxKB: 500 } },
-  { label: "10–20 KB", config: { minKB: 10, maxKB: 20 } },
-  { label: "20–50 KB", config: { minKB: 20, maxKB: 50 } },
-];
 
 const FAQS = [
   {
@@ -82,7 +62,7 @@ export default function ResizeToKbPage() {
       </header>
 
       <section aria-label="Resizer" className="glass-card mt-8 rounded-3xl p-4 sm:p-7">
-        <PrecisionTool initial={INITIAL} editable allowAuto presets={PRESETS} what="an image" />
+        <PrecisionTool initial={RESIZE_INITIAL} editable allowAuto presets={resizePresets("en")} what="image" />
       </section>
 
       <div className="mt-14 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">

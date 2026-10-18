@@ -1,0 +1,446 @@
+/**
+ * Interface strings in English and Hindi.
+ *
+ * Hindi pages live under /hi and mirror the tool and exam pages. Legal pages
+ * and How it works stay English-only for now and are linked as such.
+ *
+ * Technical units (KB, DPI, JPG, PDF, ZIP, px) stay in Latin script on
+ * purpose: that's how they're printed in the notifications and how people
+ * search for them.
+ *
+ * Adding a language: add it to LANGS, copy the `hi` block, translate it.
+ * TypeScript fails the build until every string is present.
+ */
+
+import type { DocKind } from "./specs";
+
+export const LANGS = ["en", "hi"] as const;
+export type Lang = (typeof LANGS)[number];
+
+/** Routes that exist in Hindi. Anything else links to the English page. */
+const LOCALISED = [/^\/$/, /^\/exams(\/[a-z0-9-]+)?$/, /^\/(resize-image-to-kb|signature-resize|compress-pdf-to-kb|image-to-pdf)$/];
+
+export const langFromPath = (path: string): Lang => (path === "/hi" || path.startsWith("/hi/") ? "hi" : "en");
+
+/** The English path behind a possibly-Hindi one: "/hi/exams" → "/exams". */
+export const basePath = (path: string) => (langFromPath(path) === "hi" ? path.slice(3) || "/" : path);
+
+export const hasHindi = (path: string) => LOCALISED.some((re) => re.test(basePath(path)));
+
+/** A link to `href` in `lang`, falling back to English where no translation exists. */
+export function localHref(lang: Lang, href: string) {
+  if (lang === "en" || !href.startsWith("/") || !hasHindi(href)) return href;
+  const [path, query] = href.split("?");
+  return `/hi${path === "/" ? "" : path}${query ? `?${query}` : ""}`;
+}
+
+/** hreflang alternates for a page that exists in both languages. */
+export function alternates(path: string, lang: Lang) {
+  const en = path;
+  const hi = `/hi${path === "/" ? "" : path}`;
+  return {
+    canonical: lang === "hi" ? hi : en,
+    languages: { en, hi, "x-default": en },
+  };
+}
+
+const kbSpan = (min: number, max: number, under: string, between: (a: number, b: number) => string) =>
+  min > 0 ? between(min, max) : under.replace("{max}", String(max));
+
+const en = {
+  langName: "English",
+  switchTo: "हिन्दी",
+  nav: {
+    home: ["Home", "Start here"],
+    exams: ["Exams", "UPSC, SSC, IBPS, SBI, NEET & more"],
+    kb: ["Resize to KB", "Any size window, any pixels"],
+    signature: ["Signature", "Clean ink on white paper"],
+    pdf: ["PDF", "Compress certificates to KB"],
+    how: ["How it works", "Privacy, KB maths, padding"],
+    cta: "Find your exam",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+  },
+  footer: {
+    blurb:
+      "Exam photos, signatures and certificates, sized exactly to the official specification. Everything runs in your browser — your files are never uploaded.",
+    tools: "Tools",
+    exams: "Exams",
+    site: "Sharpmonk",
+    allExams: "All exams",
+    how: "How it works",
+    about: "About",
+    contact: "Contact",
+    privacy: "Privacy",
+    terms: "Terms",
+    disclaimer: "Disclaimer",
+    upaman: "Financial calculators that show their working.",
+    railmonk: "IRCTC refund, Tatkal and waitlist tools, built on the official rules.",
+    legal:
+      "Not affiliated with IBPS, NTA or any exam body. Specifications are taken from each official notification and dated; always check the current notification before you submit.",
+    englishOnly: "",
+  },
+  tools: {
+    resize: { title: "Resize image to KB", body: "Land a photo inside any file-size window, at exact pixels or its own proportions." },
+    signature: { title: "Signature resizer", body: "Clean dark ink on white paper, at the exact pixels and KB a form asks for." },
+    pdf: { title: "Compress PDF to KB", body: "Shrink a scanned certificate into the window a form asks for, as A4 pages." },
+    imagePdf: { title: "Image to PDF", body: "Phone photos of a document into one A4 PDF, under the size limit." },
+  },
+  uploads: (hasPhoto: boolean): string => (hasPhoto ? "photo & signature" : "signature"),
+  drop: {
+    choose: (what: string) => `Choose ${what}`,
+    help: "or drop it here. JPG, PNG or WebP — a phone photo is fine. Already made one? Drop it in to check whether it passes.",
+    local: "Stays on this device. Nothing is uploaded.",
+  },
+  what: {
+    image: "an image",
+    photo: "your photo",
+    signature: "a photo of your signature",
+    thumb: "a photo of your thumb impression",
+    impressions: "a photo of your finger and thumb impressions",
+    declaration: "a photo of your declaration",
+    pdf: "a PDF or photos",
+    docPhotos: "photos of your document",
+  } satisfies Record<DocKind | "image" | "pdf" | "docPhotos", string>,
+  tip: {
+    photo: "",
+    signature: "Sign on plain white paper, photograph it flat in daylight from straight above, and crop close to the signature.",
+    thumb: "Press firmly once, without rolling, on white paper. Photograph it straight on so the ridges are sharp.",
+    impressions: "Put all fingers and thumbs of both hands on one sheet of white paper, then photograph the whole sheet straight on.",
+    declaration: "Write it in running hand, not capitals, on white paper in black ink, then photograph the page flat and straight on.",
+  } satisfies Record<DocKind, string>,
+  docLabel: {
+    photo: "Photograph",
+    signature: "Signature",
+    thumb: "Left thumb impression",
+    impressions: "Finger & thumb impressions",
+    declaration: "Hand-written declaration",
+  } satisfies Record<DocKind, string>,
+  tool: {
+    dragFace: "Drag to position — keep your face inside the dashed oval.",
+    drag: "Drag to position.",
+    autoTrim: "Cropped to the ink automatically. Drag or zoom to frame it yourself.",
+    zoom: "Zoom",
+    rotate: "Rotate",
+    fitWhole: "Fit whole image",
+    fillFrame: "Fill the frame",
+    another: "Another image",
+    clean: "Clean up the paper",
+    cleanDesc: "Turns grey, shadowed paper white and ink dark. For signatures, thumb impressions and handwriting.",
+    yourFile: "Your file",
+    building: "Building the file…",
+    quality: (q: number) => `Quality ${q}%`,
+    padded: (alone: string, min: number, pad: string) =>
+      `At this size the image alone came to ${alone}, under the ${min} KB minimum, so ${pad} of padding was added inside the file. It changes nothing you can see.`,
+    whySafe: "Why this is safe",
+    lowQuality: "The size limit forces low JPEG quality here. If it looks rough, zoom in on the part that matters or choose smaller pixel dimensions.",
+    download: (name: string) => `Download ${name}`,
+    started: "The file you started with",
+    alreadyOk: "This file already meets the specification — you can upload it as it is. The version above is there if you want the crop or cleanup anyway.",
+    sumFile: "File",
+    sumPixels: "Pixels",
+    sumSize: "Size",
+    sumDpi: "DPI",
+    ownProportions: "Your photo's proportions",
+    under: (max: number) => `Under ${max} KB`,
+    notRequired: "Not required",
+    target: "Target",
+    keepProportions: "Keep proportions",
+    exactPixels: "Exact pixels",
+    width: "Width",
+    height: "Height",
+    longest: "Longest side, at most",
+    minSize: "Minimum size",
+    maxSize: "Maximum size",
+    dpiUnset: "Leave unset",
+    badPx: (max: number) => `Width and height must be whole numbers from 1 to ${max} px.`,
+    badLong: (max: number) => `The longest side must be between 48 and ${max} px.`,
+    badMax: (max: number) => `Set a maximum size between 1 and ${max} KB.`,
+    badMin: "The minimum size has to be below the maximum.",
+    outputAlt: "The file that will be downloaded",
+    cropAria: "Crop. Drag, or use the arrow keys, to move the image within the frame.",
+    readError: "That file couldn't be read.",
+  },
+  check: {
+    jpeg: "JPEG format",
+    jpegFile: "JPEG format, .jpg file",
+    renamed: (type: string, ext: string) => `It's really a ${type} file named .${ext}`,
+    renamedDetail: "Renaming doesn't convert a file, and portals check the contents.",
+    wrongType: (type: string) => `It's a ${type} file; the form wants JPG / JPEG`,
+    px: (w: number, h: number) => `${w} × ${h} px`,
+    pxWants: (w: number, h: number, tw: number, th: number) => `${w} × ${h} px; the form wants ${tw} × ${th}`,
+    inside: (size: string, min: number, max: number) => `${size}, inside ${kbSpan(min, max, "{max} KB", (a, b) => `${a}–${b} KB`)}`,
+    insideDash: (size: string, min: number, max: number) => `${size} — inside ${kbSpan(min, max, "{max} KB", (a, b) => `${a}–${b} KB`)}`,
+    sizeWants: (size: string, min: number, max: number) => `${size}; the form wants ${kbSpan(min, max, "under {max} KB", (a, b) => `${a}–${b} KB`)}`,
+    bothCounts: (bytes: string) => `${bytes}. Passes whether the portal counts a KB as 1,000 or 1,024 bytes.`,
+    ownProps: "Your photo's own proportions.",
+    dpi: (d: number | null) => `${d ?? "No"} DPI`,
+    dpiHeader: "Written into the file header.",
+    dpiWants: (d: number | null, want: number) => `DPI ${d ? `is ${d}` : "isn't set"}; the form states ${want}`,
+    bytes: (n: number) => `${n.toLocaleString("en-IN")} bytes`,
+  },
+  exam: {
+    home: "Home",
+    exams: "Exams",
+    resizer: (short: string, uploads: string) => `${short} ${uploads} resizer`,
+    checked: (title: string, issued: string, date: string) => `Checked against the ${title} (${issued}) on ${date}`,
+    specs: (short: string) => `${short} upload specifications`,
+    thUpload: "Upload",
+    thPixels: "Pixels",
+    thSize: "File size",
+    thDpi: "DPI",
+    thFormat: "Format",
+    notSpecified: "Not specified",
+    resizerAria: "Resizer",
+    says: "What the notification says",
+    saysNote: "",
+    note: "Sharpmonk note: ",
+    also: "Also required",
+    makePdf: (label: string, span: string) => `Make the ${label.toLowerCase()} PDF (${span})`,
+    under: (max: number) => `under ${max} KB`,
+    questions: "Questions",
+    source: "Source",
+    readOn: (date: string) => `Read on ${date}. Notifications change between cycles — if yours says something different, follow it, and`,
+    tellUs: "tell us",
+    soWeUpdate: "so we can update this page.",
+    others: "Other exams",
+  },
+  bench: {
+    ready: (n: number, total: number) => `${n} of ${total} uploads ready`,
+    todo: (list: string) => `Still to do: ${list}.`,
+    allSet: "All set — download them together.",
+    zip: (n: number) => (n >= 2 ? `Download all ${n} as ZIP` : "Download all as ZIP"),
+    uploads: "Uploads",
+  },
+  doc: {
+    help: "PDFs and photos, one or many. Each PDF page and each photo becomes one A4 page.",
+    pagesInOrder: "Pages, in order",
+    page: (n: number) => `p. ${n}`,
+    up: "Move up",
+    down: "Move down",
+    rotate: "Rotate",
+    remove: "Remove",
+    addPages: "Add pages",
+    startOver: "Start over",
+    clean: "Clean up the paper",
+    cleanDesc: "For phone photos of documents: shadowed paper turns white, text turns dark.",
+    bw: "Black & white",
+    bwDesc: "Slightly smaller, and how most certificates are scanned anyway.",
+    badRange: "The minimum has to be below the maximum.",
+    make: (n: number) => (n ? `Make PDF from ${n} page${n > 1 ? "s" : ""}` : "Add pages first"),
+    yourPdf: "Your PDF",
+    stale: "You've changed something since — make the PDF again to update it.",
+    summary: (pages: number, dpi: number, q: number) => `${pages} A4 page${pages > 1 ? "s" : ""} · ${dpi} DPI · quality ${q}%`,
+    pdfA4: "PDF format, A4 pages",
+    downFrom: (size: string) => `Down from ${size}`,
+    lowDpi: (dpi: number) =>
+      `To fit, pages were rendered at ${dpi} DPI. Open the PDF and check that small print is still readable — if not, remove a page or use a larger limit if the form allows.`,
+    padded: (min: number) => `The document came out under the ${min} KB minimum, so a padding block that PDF readers ignore was added.`,
+    howPadding: "How padding works",
+    download: (name: string) => `Download ${name}`,
+    progressRender: (pages: number, dpi: number) => `Rendering ${pages} page${pages > 1 ? "s" : ""} at ${dpi} DPI…`,
+    progressFit: (max: number, dpi: number) => `Fitting into ${max} KB at ${dpi} DPI…`,
+    progressBuild: "Building the PDF…",
+  },
+};
+
+export type Strings = typeof en;
+
+const hi: Strings = {
+  langName: "हिन्दी",
+  switchTo: "English",
+  nav: {
+    home: ["होम", "यहाँ से शुरू करें"],
+    exams: ["परीक्षाएँ", "UPSC, SSC, IBPS, SBI, NEET और भी"],
+    kb: ["KB में रीसाइज़", "कोई भी साइज़, कोई भी पिक्सेल"],
+    signature: ["हस्ताक्षर", "सफ़ेद कागज़ पर साफ़ स्याही"],
+    pdf: ["PDF", "सर्टिफ़िकेट को KB में छोटा करें"],
+    how: ["यह कैसे काम करता है", "प्राइवेसी, KB का हिसाब, पैडिंग"],
+    cta: "अपनी परीक्षा चुनें",
+    openMenu: "मेन्यू खोलें",
+    closeMenu: "मेन्यू बंद करें",
+  },
+  footer: {
+    blurb:
+      "परीक्षा की फ़ोटो, हस्ताक्षर और सर्टिफ़िकेट — ठीक आधिकारिक नियमों के साइज़ में। सब कुछ आपके ब्राउज़र में होता है — आपकी फ़ाइलें कहीं अपलोड नहीं होतीं।",
+    tools: "टूल",
+    exams: "परीक्षाएँ",
+    site: "Sharpmonk",
+    allExams: "सभी परीक्षाएँ",
+    how: "यह कैसे काम करता है",
+    about: "हमारे बारे में",
+    contact: "संपर्क",
+    privacy: "प्राइवेसी",
+    terms: "शर्तें",
+    disclaimer: "अस्वीकरण",
+    upaman: "वित्तीय कैलकुलेटर, जो पूरा हिसाब दिखाते हैं।",
+    railmonk: "IRCTC रिफ़ंड, तत्काल और वेटिंग लिस्ट टूल, आधिकारिक नियमों पर आधारित।",
+    legal:
+      "IBPS, NTA या किसी भी परीक्षा संस्था से संबद्ध नहीं। हर साइज़ आधिकारिक अधिसूचना से तारीख़ के साथ लिया गया है; जमा करने से पहले मौजूदा अधिसूचना ज़रूर देखें।",
+    englishOnly: " (अंग्रेज़ी में)",
+  },
+  tools: {
+    resize: { title: "इमेज को KB में रीसाइज़ करें", body: "फ़ोटो को किसी भी KB सीमा में लाएँ — सटीक पिक्सेल में या उसके अपने अनुपात में।" },
+    signature: { title: "हस्ताक्षर रीसाइज़र", body: "सफ़ेद कागज़ पर गहरी साफ़ स्याही — फ़ॉर्म जितने पिक्सेल और KB माँगे, ठीक उतने।" },
+    pdf: { title: "PDF को KB में छोटा करें", body: "स्कैन किए सर्टिफ़िकेट को फ़ॉर्म की KB सीमा में लाएँ, A4 पेज के रूप में।" },
+    imagePdf: { title: "इमेज से PDF", body: "दस्तावेज़ की फ़ोन फ़ोटो से एक A4 PDF, साइज़ सीमा के अंदर।" },
+  },
+  uploads: (hasPhoto: boolean) => (hasPhoto ? "फ़ोटो और हस्ताक्षर" : "हस्ताक्षर"),
+  drop: {
+    choose: (what: string) => `${what} चुनें`,
+    help: "या यहाँ छोड़ें। JPG, PNG या WebP — फ़ोन की फ़ोटो चलेगी। पहले से फ़ाइल बनी है? यहाँ डालकर जाँचें कि वह पास होगी या नहीं।",
+    local: "फ़ाइल इसी डिवाइस पर रहती है। कुछ भी अपलोड नहीं होता।",
+  },
+  what: {
+    image: "इमेज",
+    photo: "अपनी फ़ोटो",
+    signature: "अपने हस्ताक्षर की फ़ोटो",
+    thumb: "अपने अँगूठे के निशान की फ़ोटो",
+    impressions: "उँगलियों और अँगूठों के निशान की फ़ोटो",
+    declaration: "अपनी घोषणा की फ़ोटो",
+    pdf: "PDF या फ़ोटो",
+    docPhotos: "दस्तावेज़ की फ़ोटो",
+  },
+  tip: {
+    photo: "",
+    signature: "सादे सफ़ेद कागज़ पर हस्ताक्षर करें, दिन की रोशनी में ठीक ऊपर से सीधी फ़ोटो लें, और हस्ताक्षर के पास तक क्रॉप करें।",
+    thumb: "सफ़ेद कागज़ पर एक बार मज़बूती से दबाएँ, घुमाएँ नहीं। सीधी फ़ोटो लें ताकि रेखाएँ साफ़ दिखें।",
+    impressions: "दोनों हाथों की सभी उँगलियों और अँगूठों के निशान एक सफ़ेद कागज़ पर लगाएँ, फिर पूरे कागज़ की सीधी फ़ोटो लें।",
+    declaration: "काली स्याही से सफ़ेद कागज़ पर, कैपिटल अक्षरों में नहीं बल्कि सामान्य लिखावट में लिखें, फिर पेज की सीधी फ़ोटो लें।",
+  },
+  docLabel: {
+    photo: "फ़ोटो",
+    signature: "हस्ताक्षर",
+    thumb: "बाएँ अँगूठे का निशान",
+    impressions: "उँगलियों और अँगूठों के निशान",
+    declaration: "हस्तलिखित घोषणा",
+  },
+  tool: {
+    dragFace: "खिसकाकर जगह ठीक करें — चेहरा बिंदीदार अंडाकार के अंदर रखें।",
+    drag: "खिसकाकर जगह ठीक करें।",
+    autoTrim: "स्याही के हिसाब से अपने-आप क्रॉप किया गया। ख़ुद फ़्रेम करने के लिए खिसकाएँ या ज़ूम करें।",
+    zoom: "ज़ूम",
+    rotate: "घुमाएँ",
+    fitWhole: "पूरी इमेज दिखाएँ",
+    fillFrame: "फ़्रेम भरें",
+    another: "दूसरी इमेज",
+    clean: "कागज़ साफ़ करें",
+    cleanDesc: "धुंधले, छाया वाले कागज़ को सफ़ेद और स्याही को गहरा करता है। हस्ताक्षर, अँगूठे के निशान और लिखावट के लिए।",
+    yourFile: "आपकी फ़ाइल",
+    building: "फ़ाइल बन रही है…",
+    quality: (q: number) => `क्वालिटी ${q}%`,
+    padded: (alone: string, min: number, pad: string) =>
+      `इस साइज़ पर इमेज अकेले ${alone} की बनी, जो ${min} KB की न्यूनतम सीमा से कम है, इसलिए फ़ाइल के अंदर ${pad} पैडिंग जोड़ी गई। इससे दिखने में कुछ नहीं बदलता।`,
+    whySafe: "यह सुरक्षित क्यों है",
+    lowQuality: "साइज़ की सीमा के कारण यहाँ JPEG क्वालिटी कम रखनी पड़ी। धुंधला लगे तो ज़रूरी हिस्से पर ज़ूम करें या कम पिक्सेल चुनें।",
+    download: (name: string) => `${name} डाउनलोड करें`,
+    started: "आपकी मूल फ़ाइल",
+    alreadyOk: "यह फ़ाइल पहले से नियमों पर खरी है — इसे जैसी है वैसे ही अपलोड कर सकते हैं। ऊपर वाली फ़ाइल तब के लिए है जब आप क्रॉप या सफ़ाई चाहें।",
+    sumFile: "फ़ाइल",
+    sumPixels: "पिक्सेल",
+    sumSize: "साइज़",
+    sumDpi: "DPI",
+    ownProportions: "आपकी फ़ोटो का अपना अनुपात",
+    under: (max: number) => `${max} KB से कम`,
+    notRequired: "ज़रूरी नहीं",
+    target: "लक्ष्य",
+    keepProportions: "अनुपात बनाए रखें",
+    exactPixels: "सटीक पिक्सेल",
+    width: "चौड़ाई",
+    height: "ऊँचाई",
+    longest: "सबसे लंबी भुजा, अधिकतम",
+    minSize: "न्यूनतम साइज़",
+    maxSize: "अधिकतम साइज़",
+    dpiUnset: "सेट न करें",
+    badPx: (max: number) => `चौड़ाई और ऊँचाई 1 से ${max} px के बीच पूर्ण संख्या होनी चाहिए।`,
+    badLong: (max: number) => `सबसे लंबी भुजा 48 से ${max} px के बीच होनी चाहिए।`,
+    badMax: (max: number) => `अधिकतम साइज़ 1 से ${max} KB के बीच रखें।`,
+    badMin: "न्यूनतम साइज़ अधिकतम से कम होना चाहिए।",
+    outputAlt: "जो फ़ाइल डाउनलोड होगी",
+    cropAria: "क्रॉप। फ़्रेम के अंदर इमेज खिसकाने के लिए खींचें या ऐरो कुंजियाँ दबाएँ।",
+    readError: "यह फ़ाइल पढ़ी नहीं जा सकी।",
+  },
+  check: {
+    jpeg: "JPEG फ़ॉर्मैट",
+    jpegFile: "JPEG फ़ॉर्मैट, .jpg फ़ाइल",
+    renamed: (type: string, ext: string) => `यह असल में ${type} फ़ाइल है, जिसका नाम .${ext} रखा गया है`,
+    renamedDetail: "नाम बदलने से फ़ाइल नहीं बदलती, और पोर्टल अंदर की सामग्री जाँचते हैं।",
+    wrongType: (type: string) => `यह ${type} फ़ाइल है; फ़ॉर्म को JPG / JPEG चाहिए`,
+    px: (w: number, h: number) => `${w} × ${h} px`,
+    pxWants: (w: number, h: number, tw: number, th: number) => `${w} × ${h} px; फ़ॉर्म को ${tw} × ${th} चाहिए`,
+    inside: (size: string, min: number, max: number) => `${size}, ${kbSpan(min, max, "{max} KB", (a, b) => `${a}–${b} KB`)} के अंदर`,
+    insideDash: (size: string, min: number, max: number) => `${size} — ${kbSpan(min, max, "{max} KB", (a, b) => `${a}–${b} KB`)} के अंदर`,
+    sizeWants: (size: string, min: number, max: number) => `${size}; फ़ॉर्म को ${kbSpan(min, max, "{max} KB से कम", (a, b) => `${a}–${b} KB`)} चाहिए`,
+    bothCounts: (bytes: string) => `${bytes}। पोर्टल 1 KB को 1,000 बाइट माने या 1,024 — दोनों में पास।`,
+    ownProps: "आपकी फ़ोटो का अपना अनुपात।",
+    dpi: (d: number | null) => (d ? `${d} DPI` : "DPI नहीं"),
+    dpiHeader: "फ़ाइल के हेडर में लिखा गया।",
+    dpiWants: (d: number | null, want: number) => `DPI ${d ? `${d} है` : "सेट नहीं है"}; फ़ॉर्म में ${want} लिखा है`,
+    bytes: (n: number) => `${n.toLocaleString("en-IN")} बाइट`,
+  },
+  exam: {
+    home: "होम",
+    exams: "परीक्षाएँ",
+    resizer: (short: string, uploads: string) => `${short} ${uploads} रीसाइज़र`,
+    checked: (title: string, issued: string, date: string) => `${title} (${issued}) से ${date} को जाँचा गया`,
+    specs: (short: string) => `${short} अपलोड के नियम`,
+    thUpload: "अपलोड",
+    thPixels: "पिक्सेल",
+    thSize: "फ़ाइल साइज़",
+    thDpi: "DPI",
+    thFormat: "फ़ॉर्मैट",
+    notSpecified: "तय नहीं",
+    resizerAria: "रीसाइज़र",
+    says: "अधिसूचना क्या कहती है",
+    saysNote: "नीचे के नियम आधिकारिक अधिसूचना के अंग्रेज़ी पाठ से, जैसे के तैसे दिए गए हैं।",
+    note: "Sharpmonk टिप्पणी: ",
+    also: "यह भी ज़रूरी है",
+    makePdf: (label: string, span: string) => `${label} की PDF बनाएँ (${span})`,
+    under: (max: number) => `${max} KB से कम`,
+    questions: "सवाल-जवाब",
+    source: "स्रोत",
+    readOn: (date: string) => `${date} को पढ़ा गया। अधिसूचनाएँ हर साल बदल सकती हैं — आपकी अधिसूचना में कुछ और लिखा हो तो उसी का पालन करें, और`,
+    tellUs: "हमें बताएँ",
+    soWeUpdate: "ताकि हम यह पेज अपडेट कर सकें।",
+    others: "दूसरी परीक्षाएँ",
+  },
+  bench: {
+    ready: (n: number, total: number) => `${total} में से ${n} अपलोड तैयार`,
+    todo: (list: string) => `अभी बाक़ी: ${list}।`,
+    allSet: "सब तैयार — सब एक साथ डाउनलोड करें।",
+    zip: (n: number) => (n >= 2 ? `सभी ${n} ZIP में डाउनलोड करें` : "सभी ZIP में डाउनलोड करें"),
+    uploads: "अपलोड",
+  },
+  doc: {
+    help: "एक या कई PDF और फ़ोटो। हर PDF पेज और हर फ़ोटो एक A4 पेज बनता है।",
+    pagesInOrder: "पेज, क्रम में",
+    page: (n: number) => `पेज ${n}`,
+    up: "ऊपर ले जाएँ",
+    down: "नीचे ले जाएँ",
+    rotate: "घुमाएँ",
+    remove: "हटाएँ",
+    addPages: "पेज जोड़ें",
+    startOver: "फिर से शुरू करें",
+    clean: "कागज़ साफ़ करें",
+    cleanDesc: "दस्तावेज़ की फ़ोन फ़ोटो के लिए: छाया वाला कागज़ सफ़ेद, अक्षर गहरे।",
+    bw: "ब्लैक एंड व्हाइट",
+    bwDesc: "थोड़ी छोटी फ़ाइल, और ज़्यादातर सर्टिफ़िकेट ऐसे ही स्कैन होते हैं।",
+    badRange: "न्यूनतम साइज़ अधिकतम से कम होना चाहिए।",
+    make: (n: number) => (n ? `${n} पेज से PDF बनाएँ` : "पहले पेज जोड़ें"),
+    yourPdf: "आपकी PDF",
+    stale: "इसके बाद आपने कुछ बदला है — अपडेट के लिए PDF फिर से बनाएँ।",
+    summary: (pages: number, dpi: number, q: number) => `${pages} A4 पेज · ${dpi} DPI · क्वालिटी ${q}%`,
+    pdfA4: "PDF फ़ॉर्मैट, A4 पेज",
+    downFrom: (size: string) => `${size} से घटकर`,
+    lowDpi: (dpi: number) =>
+      `सीमा में लाने के लिए पेज ${dpi} DPI पर बनाए गए। PDF खोलकर देखें कि छोटे अक्षर पढ़े जा रहे हैं — नहीं तो एक पेज हटाएँ या फ़ॉर्म अनुमति दे तो बड़ी सीमा चुनें।`,
+    padded: (min: number) => `दस्तावेज़ ${min} KB की न्यूनतम सीमा से छोटा बना, इसलिए एक पैडिंग ब्लॉक जोड़ा गया जिसे PDF रीडर अनदेखा करते हैं।`,
+    howPadding: "पैडिंग कैसे काम करती है",
+    download: (name: string) => `${name} डाउनलोड करें`,
+    progressRender: (pages: number, dpi: number) => `${pages} पेज ${dpi} DPI पर बन रहे हैं…`,
+    progressFit: (max: number, dpi: number) => `${dpi} DPI पर ${max} KB में फ़िट किया जा रहा है…`,
+    progressBuild: "PDF बन रही है…",
+  },
+};
+
+export const STRINGS: Record<Lang, Strings> = { en, hi };

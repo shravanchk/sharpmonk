@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cropRect, paint, settleFraming, type Fit, type Framing, type Source } from "@/lib/imageEngine";
+import { useStrings } from "@/components/LangProvider";
 
 type Props = {
   source: Source;
@@ -25,6 +26,7 @@ export default function CropFrame({ source, aspect, fit, framing, onFraming, gui
   const canvas = useRef<HTMLCanvasElement>(null);
   const drag = useRef<{ x: number; y: number; f: Framing } | null>(null);
   const [cssW, setCssW] = useState(0);
+  const s = useStrings();
 
   useEffect(() => {
     const el = box.current;
@@ -70,7 +72,7 @@ export default function CropFrame({ source, aspect, fit, framing, onFraming, gui
       style={{ aspectRatio: `${aspect}`, width: `min(100%, ${Math.round(MAX_H * aspect)}px)` }}
       tabIndex={0}
       role="group"
-      aria-label="Crop. Drag, or use the arrow keys, to move the image within the frame."
+      aria-label={s.tool.cropAria}
       onPointerDown={(e) => {
         (e.target as Element).setPointerCapture?.(e.pointerId);
         drag.current = { x: e.clientX, y: e.clientY, f: framing };

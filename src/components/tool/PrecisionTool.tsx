@@ -20,6 +20,8 @@ import {
 } from "@/lib/imageEngine";
 import { LIMITS, type ToolConfig } from "@/lib/toolConfig";
 import { fmtSize, judgeOriginal, judgeResult, type Check } from "@/lib/verdict";
+import type { Strings } from "@/lib/i18n";
+import { useStrings } from "@/components/LangProvider";
 
 export type Preset = { label: string; config: Partial<ToolConfig> };
 
@@ -30,10 +32,13 @@ type Props = {
   /** Offer the "keep proportions" mode alongside exact pixels. */
   allowAuto?: boolean;
   presets?: Preset[];
-  /** What the drop zone asks for, e.g. "your photo". */
-  what?: string;
+  /** What the drop zone asks for — a key into the strings, e.g. "photo". */
+  what?: keyof Strings["what"];
   /** Extra guidance shown under the crop, e.g. how to photograph a signature. */
   tip?: ReactNode;
+  /** Told about each finished file (and null when the image is cleared), so
+   *  an exam page can bundle every upload into one ZIP. */
+  onFile?: (file: { name: string; blob: Blob } | null) => void;
 };
 
 type Loaded = { file: File; source: Source; facts: FileFacts; id: number };
@@ -46,7 +51,8 @@ let nextId = 1;
  * shown on the right is that file — its real bytes, pixels and DPI — not an
  * estimate.
  */
-export default function PrecisionTool({ initial, editable = false, allowAuto = false, presets, what = "an image", tip }: Props) {
+export default function PrecisionTool({ initial, editable = false, allowAuto = false, presets, what = "image", tip, onFile }: Props) {
+  const s = useStrings();
   const [cfg, setCfg] = useState<ToolConfig>(initial);
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -54,10 +60,16 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
   const [framing, setFraming] = useState<Framing>(CENTRED);
   const [result, setResult] = useState<{ key: string; res: EncodeResult; url: string | null } | null>(null);
   const urlRef = useRef<string | null>(null);
+  // Read through a ref so a parent re-rendering with a new callback doesn't
+  // restart the encode.
+  const onFileRef = useRef(onFile);
+  useEffect(() => {
+    onFileRef.current = onFile;
+  }, [onFile]);
 
   const working = useMemo(() => (loaded ? rotate(loaded.source, turns) : null), [loaded, turns]);
 
-  const problem = validate(cfg);
+  const problem = validate(cfg, s);
   const key = loaded && !problem ? JSON.stringify([loaded.id, turns, framing, cfg]) : "";
   const busy = !!key && result?.key !== key;
   const current = result && result.key === key ? result : null;
@@ -78,6 +90,7 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
         if (urlRef.current) URL.revokeObjectURL(urlRef.current);
         urlRef.current = url;
         setResult({ key, res, url });
+        onFileRef.current?.(res.ok ? { name: `${cfg.fileName}.jpg`, blob: res.blob } : null);
       },
       cfg.sizeMode === "auto" ? 320 : 160,
     );
@@ -102,7 +115,7 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
       setFraming(CENTRED);
       setLoaded({ file, source, facts, id: nextId++ });
     } catch (e) {
-      setError(e instanceof DecodeError ? e.message : "That file couldn't be read.");
+      setError(e instanceof DecodeError ? e.message : s.tool.readError);
     }
   };
 
@@ -121,7 +134,7 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
       {/* Left: the image and its framing */}
       <div className="flex min-w-0 flex-col gap-4">
         {!working ? (
-          <DropZone onFile={take} what={what} />
+          <DropZone onFile={take} what={s.what[what]} />
         ) : (
           <>
             {problem ? (
@@ -139,13 +152,11 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
               />
             )}
             <p className="text-muted text-center text-xs">
-              {autoTrim
-                ? "Cropped to the ink automatically. Drag or zoom to frame it yourself."
-                : `Drag to position${cfg.guide ? " — keep your face inside the dashed oval" : ""}.`}
+              {autoTrim ? s.tool.autoTrim : cfg.guide ? s.tool.dragFace : s.tool.drag}
             </p>
 
             <RangeField
-              label="Zoom"
+              label={s.tool.zoom}
               value={framing.zoom}
               min={1}
               max={4}
@@ -156,7 +167,7 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
 
             <div className="flex flex-wrap gap-2">
               <button type="button" className="btn-ghost inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" onClick={() => { setTurns((t) => t + 1); setFraming(CENTRED); }}>
-                <Icon name="rotate" size={16} /> Rotate
+                <Icon name="rotate" size={16} /> {s.tool.rotate}
               </button>
               {cfg.sizeMode === "exact" && (
                 <button
@@ -166,17 +177,17 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
                   aria-pressed={cfg.fit === "contain"}
                 >
                   <Icon name="crop" size={16} />
-                  {cfg.fit === "cover" ? "Fit whole image" : "Fill the frame"}
+                  {cfg.fit === "cover" ? s.tool.fitWhole : s.tool.fillFrame}
                 </button>
               )}
-              <button type="button" className="btn-ghost inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" onClick={() => { setLoaded(null); setResult(null); }}>
-                <Icon name="image" size={16} /> Another image
+              <button type="button" className="btn-ghost inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" onClick={() => { setLoaded(null); setResult(null); onFile?.(null); }}>
+                <Icon name="image" size={16} /> {s.tool.another}
               </button>
             </div>
 
             <ToggleField
-              label="Clean up the paper"
-              description="Turns grey, shadowed paper white and ink dark. For signatures, thumb impressions and handwriting."
+              label={s.tool.clean}
+              description={s.tool.cleanDesc}
               checked={cfg.cleanInk}
               onChange={(cleanInk) => update({ cleanInk })}
             />
@@ -193,14 +204,14 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
 
       {/* Right: target, then the file */}
       <div className="flex min-w-0 flex-col gap-4">
-        {editable && <TargetEditor cfg={cfg} update={update} allowAuto={allowAuto} presets={presets} />}
+        {editable && <TargetEditor cfg={cfg} update={update} allowAuto={allowAuto} presets={presets} s={s} />}
 
         <section aria-live="polite" className="glass-card rounded-2xl p-5">
-          <h3 className="text-muted font-mono text-xs tracking-[0.14em] uppercase">Your file</h3>
+          <h3 className="text-muted font-mono text-xs tracking-[0.14em] uppercase">{s.tool.yourFile}</h3>
 
-          {!loaded && <TargetSummary cfg={cfg} />}
+          {!loaded && <TargetSummary cfg={cfg} s={s} />}
 
-          {loaded && busy && !current && <p className="text-muted mt-4 text-sm">Building the file…</p>}
+          {loaded && busy && !current && <p className="text-muted mt-4 text-sm">{s.tool.building}</p>}
 
           {loaded && current && !current.res.ok && (
             <p className="mt-4 flex gap-2 text-sm">
@@ -212,29 +223,26 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
           {ok && current?.url && (
             <div className={`mt-4 flex flex-col gap-4 transition-opacity ${busy ? "opacity-60" : ""}`}>
               <div className="flex items-start gap-4">
-                <OutputPreview url={current.url} width={ok.width} height={ok.height} />
+                <OutputPreview url={current.url} width={ok.width} height={ok.height} alt={s.tool.outputAlt} />
                 <div className="min-w-0">
                   <div className="text-3xl font-semibold tracking-tight text-[var(--accent)]">{fmtSize(ok.bytes)}</div>
                   <div className="text-muted mt-0.5 text-sm">
                     {ok.width} × {ok.height} px · JPG{ok.dpi ? ` · ${ok.dpi} DPI` : ""}
                   </div>
-                  <div className="text-muted mt-0.5 text-xs">Quality {Math.round(ok.quality * 100)}%</div>
+                  <div className="text-muted mt-0.5 text-xs">{s.tool.quality(Math.round(ok.quality * 100))}</div>
                 </div>
               </div>
 
-              <CheckList checks={judgeResult(ok, cfg)} />
+              <CheckList checks={judgeResult(ok, cfg, s)} />
 
               {ok.padded > 0 && (
                 <p className="text-muted rounded-xl bg-[var(--surface-1)] p-3 text-xs leading-relaxed">
-                  At this size the image alone came to {fmtSize(ok.bytes - ok.padded)}, under the {cfg.minKB} KB minimum, so{" "}
-                  {fmtSize(ok.padded)} of padding was added inside the file. It changes nothing you can see.{" "}
-                  <Link href="/how-it-works#padding" className="text-[var(--accent)] underline-offset-2 hover:underline">Why this is safe</Link>
+                  {s.tool.padded(fmtSize(ok.bytes - ok.padded), cfg.minKB, fmtSize(ok.padded))}{" "}
+                  <Link href="/how-it-works#padding" className="text-[var(--accent)] underline-offset-2 hover:underline">{s.tool.whySafe}</Link>
                 </p>
               )}
               {ok.quality < 0.5 && (
-                <p className="text-muted text-xs">
-                  The size limit forces low JPEG quality here. If it looks rough, zoom in on the part that matters or choose smaller pixel dimensions.
-                </p>
+                <p className="text-muted text-xs">{s.tool.lowQuality}</p>
               )}
 
               <a
@@ -243,7 +251,7 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
                 className="btn-glow inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold"
               >
                 <Icon name="download" size={17} />
-                Download {cfg.fileName}.jpg
+                {s.tool.download(`${cfg.fileName}.jpg`)}
               </a>
             </div>
           )}
@@ -251,11 +259,14 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
 
         {loaded && (
           <section className="rounded-2xl border border-[var(--line)] p-5">
-            <h3 className="text-muted font-mono text-xs tracking-[0.14em] uppercase">The file you started with</h3>
+            <h3 className="text-muted font-mono text-xs tracking-[0.14em] uppercase">{s.tool.started}</h3>
             <p className="mt-2 truncate text-sm" title={loaded.facts.name}>{loaded.facts.name}</p>
             <div className="mt-3">
-              <CheckList checks={judgeOriginal(loaded.facts, cfg)} />
+              <CheckList checks={judgeOriginal(loaded.facts, cfg, s)} />
             </div>
+            {judgeOriginal(loaded.facts, cfg, s).every((c) => c.ok) && (
+              <p className="mt-4 rounded-xl border border-[var(--positive)]/40 bg-[var(--positive)]/10 p-3 text-sm">{s.tool.alreadyOk}</p>
+            )}
           </section>
         )}
       </div>
@@ -263,39 +274,39 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
   );
 }
 
-function validate(c: ToolConfig): string | null {
+function validate(c: ToolConfig, s: Strings): string | null {
   const int = (n: number) => Number.isInteger(n) && n >= 1 && n <= LIMITS.px;
-  if (c.sizeMode === "exact" && (!int(c.width) || !int(c.height))) return `Width and height must be whole numbers from 1 to ${LIMITS.px} px.`;
-  if (c.sizeMode === "auto" && (!int(c.maxLongSide) || c.maxLongSide < 48)) return `The longest side must be between 48 and ${LIMITS.px} px.`;
-  if (!(c.maxKB > 0) || c.maxKB > LIMITS.kb) return `Set a maximum size between 1 and ${LIMITS.kb} KB.`;
-  if (c.minKB < 0 || c.minKB >= c.maxKB) return "The minimum size has to be below the maximum.";
+  if (c.sizeMode === "exact" && (!int(c.width) || !int(c.height))) return s.tool.badPx(LIMITS.px);
+  if (c.sizeMode === "auto" && (!int(c.maxLongSide) || c.maxLongSide < 48)) return s.tool.badLong(LIMITS.px);
+  if (!(c.maxKB > 0) || c.maxKB > LIMITS.kb) return s.tool.badMax(LIMITS.kb);
+  if (c.minKB < 0 || c.minKB >= c.maxKB) return s.tool.badMin;
   return null;
 }
 
-function TargetSummary({ cfg }: { cfg: ToolConfig }) {
+function TargetSummary({ cfg, s }: { cfg: ToolConfig; s: Strings }) {
   return (
     <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
       <div>
-        <dt className="text-muted text-xs">File</dt>
+        <dt className="text-muted text-xs">{s.tool.sumFile}</dt>
         <dd className="font-medium">{cfg.fileName}.jpg</dd>
       </div>
       <div>
-        <dt className="text-muted text-xs">Pixels</dt>
-        <dd className="font-medium">{cfg.sizeMode === "exact" ? `${cfg.width} × ${cfg.height}` : "Your photo's proportions"}</dd>
+        <dt className="text-muted text-xs">{s.tool.sumPixels}</dt>
+        <dd className="font-medium">{cfg.sizeMode === "exact" ? `${cfg.width} × ${cfg.height}` : s.tool.ownProportions}</dd>
       </div>
       <div>
-        <dt className="text-muted text-xs">Size</dt>
-        <dd className="font-medium">{cfg.minKB > 0 ? `${cfg.minKB}–${cfg.maxKB} KB` : `Under ${cfg.maxKB} KB`}</dd>
+        <dt className="text-muted text-xs">{s.tool.sumSize}</dt>
+        <dd className="font-medium">{cfg.minKB > 0 ? `${cfg.minKB}–${cfg.maxKB} KB` : s.tool.under(cfg.maxKB)}</dd>
       </div>
       <div>
-        <dt className="text-muted text-xs">DPI</dt>
-        <dd className="font-medium">{cfg.dpi ?? "Not required"}</dd>
+        <dt className="text-muted text-xs">{s.tool.sumDpi}</dt>
+        <dd className="font-medium">{cfg.dpi ?? s.tool.notRequired}</dd>
       </div>
     </dl>
   );
 }
 
-function OutputPreview({ url, width, height }: { url: string; width: number; height: number }) {
+function OutputPreview({ url, width, height, alt }: { url: string; width: number; height: number; alt: string }) {
   // Shown at true size, doubled when tiny so a 140 × 60 signature is legible,
   // and capped so a large photo doesn't swamp the panel.
   const scale = Math.min(width < 160 ? 2 : 1, 132 / width, 170 / height);
@@ -303,7 +314,7 @@ function OutputPreview({ url, width, height }: { url: string; width: number; hei
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={url}
-      alt="The file that will be downloaded"
+      alt={alt}
       width={Math.round(width * scale)}
       height={Math.round(height * scale)}
       className="shrink-0 rounded-md border border-[var(--line-strong)] bg-white"
@@ -337,11 +348,13 @@ function TargetEditor({
   update,
   allowAuto,
   presets,
+  s,
 }: {
   cfg: ToolConfig;
   update: (p: Partial<ToolConfig>) => void;
   allowAuto: boolean;
   presets?: Preset[];
+  s: Strings;
 }) {
   const num = (v: string) => (v.trim() === "" ? NaN : Number(v));
   const field = (label: string, value: number, onChange: (n: number) => void, suffix: string) => (
@@ -361,7 +374,7 @@ function TargetEditor({
 
   return (
     <section className="glass-card rounded-2xl p-5">
-      <h3 className="text-muted font-mono text-xs tracking-[0.14em] uppercase">Target</h3>
+      <h3 className="text-muted font-mono text-xs tracking-[0.14em] uppercase">{s.tool.target}</h3>
 
       {presets && presets.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
@@ -389,7 +402,7 @@ function TargetEditor({
               onClick={() => update({ sizeMode: m })}
               className={`rounded-full px-3 py-1.5 transition-colors ${cfg.sizeMode === m ? "bg-[var(--foreground)] text-[var(--background)]" : "text-muted hover:text-[var(--foreground)]"}`}
             >
-              {m === "auto" ? "Keep proportions" : "Exact pixels"}
+              {m === "auto" ? s.tool.keepProportions : s.tool.exactPixels}
             </button>
           ))}
         </div>
@@ -398,14 +411,14 @@ function TargetEditor({
       <div className="mt-4 grid grid-cols-2 gap-3">
         {cfg.sizeMode === "exact" ? (
           <>
-            {field("Width", cfg.width, (width) => update({ width }), "px")}
-            {field("Height", cfg.height, (height) => update({ height }), "px")}
+            {field(s.tool.width, cfg.width, (width) => update({ width }), "px")}
+            {field(s.tool.height, cfg.height, (height) => update({ height }), "px")}
           </>
         ) : (
-          <div className="col-span-2">{field("Longest side, at most", cfg.maxLongSide, (maxLongSide) => update({ maxLongSide }), "px")}</div>
+          <div className="col-span-2">{field(s.tool.longest, cfg.maxLongSide, (maxLongSide) => update({ maxLongSide }), "px")}</div>
         )}
-        {field("Minimum size", cfg.minKB, (minKB) => update({ minKB: Number.isNaN(minKB) ? 0 : minKB }), "KB")}
-        {field("Maximum size", cfg.maxKB, (maxKB) => update({ maxKB }), "KB")}
+        {field(s.tool.minSize, cfg.minKB, (minKB) => update({ minKB: Number.isNaN(minKB) ? 0 : minKB }), "KB")}
+        {field(s.tool.maxSize, cfg.maxKB, (maxKB) => update({ maxKB }), "KB")}
         <label className="col-span-2 flex flex-col gap-1.5">
           <span className="text-sm font-medium text-[var(--foreground)]/90">DPI</span>
           <select
@@ -413,7 +426,7 @@ function TargetEditor({
             value={cfg.dpi ?? ""}
             onChange={(e) => update({ dpi: e.target.value ? Number(e.target.value) : undefined })}
           >
-            <option value="">Leave unset</option>
+            <option value="">{s.tool.dpiUnset}</option>
             {[72, 96, 150, 200, 300].map((d) => (
               <option key={d} value={d}>{d} DPI</option>
             ))}

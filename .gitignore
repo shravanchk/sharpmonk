@@ -43,3 +43,6 @@ next-env.d.ts
 # cloudflare
 /out
 .wrangler
+
+# copied from pdfjs-dist by scripts/copy-pdf-worker.mjs
+/public/vendor/

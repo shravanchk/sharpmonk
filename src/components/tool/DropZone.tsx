@@ -2,10 +2,11 @@
 
 import { useRef, useState } from "react";
 import Icon from "@/components/Icon";
+import { useStrings } from "@/components/LangProvider";
 
 type Props = {
   onFile: (file: File) => void;
-  /** e.g. "your photo" / "the signature scan". */
+  /** Already localised, e.g. "your photo". */
   what: string;
 };
 
@@ -14,6 +15,7 @@ type Props = {
 export default function DropZone({ onFile, what }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
+  const s = useStrings();
 
   const take = (files: FileList | null | undefined) => {
     const f = files?.[0];
@@ -51,13 +53,13 @@ export default function DropZone({ onFile, what }: Props) {
       <span className="icon-badge icon-badge-lg icon-badge--blue">
         <Icon name="upload" size={22} />
       </span>
-      <span className="font-medium">Choose {what}</span>
+      <span className="font-medium">{s.drop.choose(what)}</span>
       <span className="text-muted max-w-xs text-sm leading-relaxed">
-        or drop it here. JPG, PNG or WebP — a phone photo is fine.
+        {s.drop.help}
       </span>
       <span className="text-muted inline-flex items-center gap-1.5 text-xs">
         <Icon name="lock" size={13} />
-        Stays on this device. Nothing is uploaded.
+        {s.drop.local}
       </span>
       <input
         ref={input}
