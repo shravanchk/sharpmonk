@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import Icon, { type IconName } from "@/components/Icon";
 import PrecisionTool from "./PrecisionTool";
 import { configFromDoc } from "@/lib/toolConfig";
@@ -20,9 +20,17 @@ const ICON: Record<DocKind, IconName> = {
  * Every upload an exam asks for, one tab each. Tabs stay mounted while hidden
  * so switching to the signature doesn't throw away a finished photo.
  */
+const noSubscribe = () => () => {};
+
 export default function ExamWorkbench({ docs, examSlug }: { docs: DocSpec[]; examSlug: string }) {
   const s = useStrings();
-  const [active, setActive] = useState(0);
+  // `?shared=1&doc=signature` from /open: that upload takes the shared file
+  // and its tab opens first. Read after hydration; the static HTML has none.
+  const sharedDoc = useSyncExternalStore(noSubscribe, () => new URLSearchParams(window.location.search).get("doc"), () => null);
+  const [picked, setPicked] = useState<number | null>(null);
+  const sharedIndex = docs.findIndex((d) => d.kind === sharedDoc);
+  const active = picked ?? Math.max(0, sharedIndex);
+  const setActive = setPicked;
   const [files, setFiles] = useState<Record<string, { name: string; blob: Blob }>>({});
   const ready = docs.filter((d) => files[d.kind]);
 
@@ -100,6 +108,7 @@ export default function ExamWorkbench({ docs, examSlug }: { docs: DocSpec[]; exa
             initial={configFromDoc(d)}
             what={d.kind}
             onFile={fileFor(d.kind)}
+            shared={i === Math.max(0, sharedIndex) && sharedIndex >= 0}
             tip={s.tip[d.kind] ? <p className="text-muted text-xs leading-relaxed">{s.tip[d.kind]}</p> : undefined}
           />
         </div>

@@ -18,7 +18,11 @@ export const LANGS = ["en", "hi"] as const;
 export type Lang = (typeof LANGS)[number];
 
 /** Routes that exist in Hindi. Anything else links to the English page. */
-const LOCALISED = [/^\/$/, /^\/exams(\/[a-z0-9-]+)?$/, /^\/(resize-image-to-kb|signature-resize|compress-pdf-to-kb|image-to-pdf)$/];
+const LOCALISED = [/^\/$/, /^\/exams(\/[a-z0-9-]+)?$/, /^\/(resize-image-to-kb|signature-resize|compress-pdf-to-kb|image-to-pdf|open)$/];
+
+/** localStorage key for the language last used. The Header writes it; /open
+ *  reads it, so a share from another app continues in that language. */
+export const LANG_KEY = "sharpmonk-lang";
 
 export const langFromPath = (path: string): Lang => (path === "/hi" || path.startsWith("/hi/") ? "hi" : "en");
 
@@ -209,6 +213,37 @@ const en = {
     uneven: "One side of your face is in shadow",
     lightDetail: "Retake it facing a window in daylight, with no lamp behind or beside you.",
     measured: "Measured on this device from the image itself. A guide to the notification's rules, not the portal's own check.",
+  },
+  open: {
+    title: "Open with Sharpmonk",
+    loading: "Opening…",
+    what: (n: number) => (n === 1 ? "What is this file for?" : `What are these ${n} files for?`),
+    none: "Nothing came through from the share. Pick a tool and choose the file there.",
+    forExam: "For an exam form",
+    pickExam: "Which exam?",
+    pickUpload: (short: string) => `Which ${short} upload?`,
+    pdfUpload: (label: string) => `${label} (PDF)`,
+    tools: "Or use a tool",
+    noExamPdf: "No exam here asks for this as a PDF upload. Use Compress PDF to KB below.",
+    local: "The files stay on this phone.",
+  },
+  camera: {
+    use: "Use camera",
+    title: "Take a photo",
+    starting: "Starting the camera…",
+    capture: "Take photo",
+    flip: "Switch camera",
+    close: "Close",
+    denied: "The camera isn't available. Allow camera access for this site, or choose a photo from your gallery instead.",
+    tipFace: "Face a window in daylight, with a plain wall behind you. Fit your head inside the oval.",
+    tipPaper: "Hold the phone flat above the paper, in daylight, with no shadow falling on it.",
+  },
+  install: {
+    cta: "Install the app",
+    hint: "Opens from your home screen and works offline",
+    iosTitle: "Add Sharpmonk to your home screen",
+    iosSteps: ["Tap the Share button in Safari's toolbar.", "Choose “Add to Home Screen”.", "Tap Add."],
+    close: "Close",
   },
   exam: {
     home: "Home",
@@ -439,6 +474,37 @@ const hi: Strings = {
     uneven: "चेहरे के एक तरफ़ छाया है",
     lightDetail: "दिन में खिड़की की ओर मुँह करके दोबारा फ़ोटो लें; पीछे या बगल में कोई लैंप न हो।",
     measured: "इसी डिवाइस पर तस्वीर से मापा गया। यह अधिसूचना के नियमों के लिए एक मार्गदर्शक है, पोर्टल की अपनी जाँच नहीं।",
+  },
+  open: {
+    title: "Sharpmonk में खोलें",
+    loading: "खुल रहा है…",
+    what: (n: number) => (n === 1 ? "यह फ़ाइल किस काम के लिए है?" : `ये ${n} फ़ाइलें किस काम के लिए हैं?`),
+    none: "शेयर से कुछ नहीं आया। कोई टूल चुनें और फ़ाइल वहीं चुनें।",
+    forExam: "परीक्षा फ़ॉर्म के लिए",
+    pickExam: "कौन-सी परीक्षा?",
+    pickUpload: (short: string) => `${short} का कौन-सा अपलोड?`,
+    pdfUpload: (label: string) => `${label} (PDF)`,
+    tools: "या कोई टूल चुनें",
+    noExamPdf: "यहाँ की कोई परीक्षा इसे PDF अपलोड के रूप में नहीं माँगती। नीचे “PDF को KB में छोटा करें” चुनें।",
+    local: "फ़ाइलें इसी फ़ोन पर रहती हैं।",
+  },
+  camera: {
+    use: "कैमरा इस्तेमाल करें",
+    title: "फ़ोटो लें",
+    starting: "कैमरा चालू हो रहा है…",
+    capture: "फ़ोटो लें",
+    flip: "कैमरा बदलें",
+    close: "बंद करें",
+    denied: "कैमरा उपलब्ध नहीं है। इस साइट को कैमरे की अनुमति दें, या गैलरी से फ़ोटो चुनें।",
+    tipFace: "दिन में खिड़की की ओर मुँह करें, पीछे सादी दीवार हो। सिर को अंडाकार घेरे के अंदर रखें।",
+    tipPaper: "दिन की रोशनी में फ़ोन को कागज़ के ठीक ऊपर सीधा रखें, कागज़ पर छाया न पड़े।",
+  },
+  install: {
+    cta: "ऐप इंस्टॉल करें",
+    hint: "होम स्क्रीन से खुलता है और बिना इंटरनेट भी चलता है",
+    iosTitle: "Sharpmonk को होम स्क्रीन पर जोड़ें",
+    iosSteps: ["Safari के टूलबार में Share बटन दबाएँ।", "“Add to Home Screen” चुनें।", "Add दबाएँ।"],
+    close: "बंद करें",
   },
   exam: {
     home: "होम",

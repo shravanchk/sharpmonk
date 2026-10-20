@@ -44,7 +44,9 @@ export type IconName =
   | "alert"
   | "x"
   | "sparkle"
-  | "eye-off";
+  | "eye-off"
+  | "camera"
+  | "smartphone";
 
 const PATHS: Record<IconName, React.ReactNode> = {
   shield: <path d="M12 3 5 6v5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z" />,
@@ -212,6 +214,18 @@ const PATHS: Record<IconName, React.ReactNode> = {
     </>
   ),
   x: <path d="M6 6l12 12M18 6 6 18" />,
+  camera: (
+    <>
+      <path d="M4 8.5h3.2l1.6-2.5h6.4l1.6 2.5H20a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a1 1 0 0 1 1-1Z" />
+      <circle cx="12" cy="13.3" r="3.3" />
+    </>
+  ),
+  smartphone: (
+    <>
+      <rect x="6.5" y="2.5" width="11" height="19" rx="2.5" />
+      <path d="M10.5 18.5h3" />
+    </>
+  ),
   sparkle: <path d="M12 3.5c.7 4.3 2.2 5.8 6.5 6.5-4.3.7-5.8 2.2-6.5 6.5-.7-4.3-2.2-5.8-6.5-6.5 4.3-.7 5.8-2.2 6.5-6.5ZM18.5 15.5c.3 1.6.9 2.2 2.5 2.5-1.6.3-2.2.9-2.5 2.5-.3-1.6-.9-2.2-2.5-2.5 1.6-.3 2.2-.9 2.5-2.5Z" />,
   "eye-off": (
     <>

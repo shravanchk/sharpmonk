@@ -10,6 +10,11 @@ import { safeWindow } from "@/lib/jpeg";
 import { fmtSize } from "@/lib/verdict";
 import type { Strings } from "@/lib/i18n";
 import { useStrings } from "@/components/LangProvider";
+import { consumeShared, sharedFiles } from "@/lib/shared";
+import { CameraButton, type CameraSpec } from "./Camera";
+
+// A4, portrait: each photo becomes one page.
+const PAGE_CAMERA: CameraSpec = { facing: "environment", aspect: 210 / 297 };
 
 export type DocPreset = { label: string; minKB: number; maxKB: number };
 
@@ -85,7 +90,7 @@ export default function DocumentTool({ initial, presets, what, fileName }: Props
     return () => clearTimeout(id);
   }, []);
 
-  const add = async (files: FileList | null) => {
+  const add = async (files: FileList | File[] | null) => {
     if (!files?.length) return;
     setError(null);
     const added: Item[] = [];
@@ -99,6 +104,25 @@ export default function DocumentTool({ initial, presets, what, fileName }: Props
     }
     setItems((list) => [...list, ...added]);
   };
+
+  // Files shared from another app become the first pages.
+  const addRef = useRef(add);
+  useEffect(() => {
+    addRef.current = add;
+  });
+  useEffect(() => {
+    const incoming = sharedFiles();
+    if (!incoming) return;
+    let cancelled = false;
+    incoming.then((files) => {
+      if (cancelled) return;
+      if (files.length) addRef.current(files);
+      consumeShared();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const move = (id: number, by: number) =>
     setItems((list) => {
@@ -150,27 +174,30 @@ export default function DocumentTool({ initial, presets, what, fileName }: Props
         />
 
         {items.length === 0 ? (
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => input.current?.click()}
-            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), input.current?.click())}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              add(e.dataTransfer.files);
-            }}
-            className="flex min-h-64 cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[var(--line-strong)] bg-[var(--surface-1)] p-6 text-center transition-colors hover:bg-[var(--surface-2)]"
-          >
-            <span className="icon-badge icon-badge-lg icon-badge--amber">
-              <Icon name="file-text" size={22} />
-            </span>
-            <span className="font-medium">{s.drop.choose(s.what[what])}</span>
-            <span className="text-muted max-w-xs text-sm leading-relaxed">{s.doc.help}</span>
-            <span className="text-muted inline-flex items-center gap-1.5 text-xs">
-              <Icon name="lock" size={13} />
-              {s.drop.local}
-            </span>
+          <div className="flex flex-col gap-3">
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => input.current?.click()}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), input.current?.click())}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                add(e.dataTransfer.files);
+              }}
+              className="flex min-h-64 cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[var(--line-strong)] bg-[var(--surface-1)] p-6 text-center transition-colors hover:bg-[var(--surface-2)]"
+            >
+              <span className="icon-badge icon-badge-lg icon-badge--amber">
+                <Icon name="file-text" size={22} />
+              </span>
+              <span className="font-medium">{s.drop.choose(s.what[what])}</span>
+              <span className="text-muted max-w-xs text-sm leading-relaxed">{s.doc.help}</span>
+              <span className="text-muted inline-flex items-center gap-1.5 text-xs">
+                <Icon name="lock" size={13} />
+                {s.drop.local}
+              </span>
+            </div>
+            <CameraButton spec={PAGE_CAMERA} onFile={(f) => add([f])} className="self-center" />
           </div>
         ) : (
           <>
@@ -201,6 +228,7 @@ export default function DocumentTool({ initial, presets, what, fileName }: Props
               <button type="button" className="btn-ghost inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" onClick={() => input.current?.click()}>
                 <Icon name="upload" size={16} /> {s.doc.addPages}
               </button>
+              <CameraButton spec={PAGE_CAMERA} onFile={(f) => add([f])} />
               <button type="button" className="btn-ghost inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" onClick={() => { setItems([]); setOriginals([]); setResult(null); }}>
                 <Icon name="x" size={16} /> {s.doc.startOver}
               </button>

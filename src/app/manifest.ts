@@ -36,6 +36,39 @@ export default function manifest(): MetadataRoute.Manifest {
         type: "image/png",
         purpose: "any",
       },
+      {
+        src: "/icon-maskable-192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icon-maskable-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
     ],
+    // Long-press the app icon.
+    shortcuts: [
+      { name: "Exams", short_name: "Exams", url: "/exams", icons: [{ src: "/icon-192.png", sizes: "192x192" }] },
+      { name: "Resize image to KB", short_name: "Resize", url: "/resize-image-to-kb", icons: [{ src: "/icon-192.png", sizes: "192x192" }] },
+      { name: "Signature resizer", short_name: "Signature", url: "/signature-resize", icons: [{ src: "/icon-192.png", sizes: "192x192" }] },
+      { name: "Compress PDF to KB", short_name: "PDF", url: "/compress-pdf-to-kb", icons: [{ src: "/icon-192.png", sizes: "192x192" }] },
+    ],
+    // Once installed, Sharpmonk appears in the phone's share sheet: share a
+    // photo or PDF from the gallery or WhatsApp straight into a tool. The
+    // service worker receives the POST (public/sw.js) and /open asks which
+    // tool it's for. Nothing is uploaded — the "POST" never leaves the phone.
+    share_target: {
+      action: "/share-target",
+      method: "POST",
+      enctype: "multipart/form-data",
+      params: {
+        // MIME types only: the Play Store app turns these into Android
+        // intent filters, which reject bare extensions.
+        files: [{ name: "files", accept: ["image/*", "application/pdf"] }],
+      },
+    },
   };
 }

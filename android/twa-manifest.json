@@ -1,0 +1,88 @@
+{
+  "packageId": "com.sharpmonk.app",
+  "host": "sharpmonk.com",
+  "name": "Sharpmonk",
+  "launcherName": "Sharpmonk",
+  "display": "standalone",
+  "themeColor": "#17325C",
+  "themeColorDark": "#05070D",
+  "navigationColor": "#05070D",
+  "navigationColorDark": "#05070D",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#05070D",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://sharpmonk.com/icon-512.png",
+  "maskableIconUrl": "https://sharpmonk.com/icon-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "upload"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [
+    {
+      "name": "Exams",
+      "shortName": "Exams",
+      "url": "https://sharpmonk.com/exams",
+      "chosenIconUrl": "https://sharpmonk.com/icon-192.png"
+    },
+    {
+      "name": "Resize image to KB",
+      "shortName": "Resize",
+      "url": "https://sharpmonk.com/resize-image-to-kb",
+      "chosenIconUrl": "https://sharpmonk.com/icon-192.png"
+    },
+    {
+      "name": "Signature resizer",
+      "shortName": "Signature",
+      "url": "https://sharpmonk.com/signature-resize",
+      "chosenIconUrl": "https://sharpmonk.com/icon-192.png"
+    },
+    {
+      "name": "Compress PDF to KB",
+      "shortName": "PDF",
+      "url": "https://sharpmonk.com/compress-pdf-to-kb",
+      "chosenIconUrl": "https://sharpmonk.com/icon-192.png"
+    }
+  ],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://sharpmonk.com/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://sharpmonk.com/",
+  "minSdkVersion": 21,
+  "shareTarget": {
+    "action": "https://sharpmonk.com/share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "files",
+          "accept": [
+            "image/*",
+            "application/pdf"
+          ]
+        }
+      ]
+    }
+  },
+  "orientation": "portrait",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "displayOverride": [],
+  "appVersion": "1.0.0"
+}

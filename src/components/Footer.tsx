@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import MonkMark from "./MonkMark";
+import InstallApp from "./InstallApp";
 import { EXAMS } from "@/lib/specs";
 import { STRINGS, hasHindi, langFromPath, localHref, type Lang } from "@/lib/i18n";
 
@@ -65,6 +66,9 @@ export default function Footer() {
             </span>
             <p className="mt-2 text-sm font-medium text-[var(--accent)]">{STRINGS[lang].tagline}</p>
             <p className="text-muted mt-3 max-w-xs text-sm leading-relaxed">{f.blurb}</p>
+            <div className="mt-3">
+              <InstallApp lang={lang} variant="link" />
+            </div>
             <ul className="mt-5 flex max-w-xs flex-col gap-3">
               {SISTERS.map((s) => (
                 <li key={s.href} className="text-sm leading-snug">

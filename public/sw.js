@@ -7,11 +7,16 @@
  * - Pages: network first (so updates arrive), falling back to the cache.
  * - /_next/static and /vendor: cache first. Their names change whenever
  *   their contents do, so a cached copy is never stale.
+ * - POST /share-target: files shared from another app (the manifest's
+ *   share_target). They're parked in their own cache and the page at /open
+ *   picks them up — the share never touches the network.
  *
  * Bump VERSION to drop every old cache on the next visit.
  */
 const VERSION = "v1";
 const CACHE = `sharpmonk-${VERSION}`;
+// Read by src/lib/shared.ts; not versioned, so an update never drops a share.
+const SHARE_CACHE = "sharpmonk-share";
 
 const PAGES = [
   "/",
@@ -20,7 +25,9 @@ const PAGES = [
   "/signature-resize",
   "/compress-pdf-to-kb",
   "/image-to-pdf",
+  "/open",
   "/hi",
+  "/hi/open",
 ];
 
 const ASSET_RE = /(?:src|href)="(\/(?:_next\/static|vendor)\/[^"]+)"/g;
@@ -50,7 +57,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     (async () => {
-      for (const key of await caches.keys()) if (key !== CACHE) await caches.delete(key);
+      for (const key of await caches.keys()) if (key !== CACHE && key !== SHARE_CACHE) await caches.delete(key);
       await self.clients.claim();
     })(),
   );
@@ -58,9 +65,14 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const req = event.request;
-  if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+
+  if (req.method === "POST" && url.pathname === "/share-target") {
+    event.respondWith(receiveShare(req));
+    return;
+  }
+  if (req.method !== "GET") return;
 
   if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/vendor/")) {
     event.respondWith(
@@ -93,3 +105,29 @@ self.addEventListener("fetch", (event) => {
     );
   }
 });
+
+/** Keeps the shared files (replacing any earlier share) and opens /open. */
+async function receiveShare(req) {
+  try {
+    const form = await req.formData();
+    const files = form.getAll("files").filter((f) => typeof f === "object" && "size" in f);
+    const cache = await caches.open(SHARE_CACHE);
+    for (const key of await cache.keys()) await cache.delete(key);
+    await Promise.all(
+      files.map((f, i) =>
+        cache.put(
+          `/__shared/${i}`,
+          new Response(f, {
+            headers: {
+              "content-type": f.type || "application/octet-stream",
+              "x-name": encodeURIComponent(f.name || `shared-${i + 1}`),
+            },
+          }),
+        ),
+      ),
+    );
+  } catch {
+    // /open says nothing arrived, and offers the tools anyway.
+  }
+  return Response.redirect(new URL("/open?shared=1", self.location.origin).href, 303);
+}

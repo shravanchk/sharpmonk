@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/copy-vendor.mjs",
+    "predev": "node scripts/copy-vendor.mjs && node scripts/assetlinks.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/copy-vendor.mjs",
+    "prebuild": "node scripts/copy-vendor.mjs && node scripts/assetlinks.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

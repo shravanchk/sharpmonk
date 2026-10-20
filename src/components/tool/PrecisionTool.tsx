@@ -22,6 +22,7 @@ import {
 import { LIMITS, type ToolConfig } from "@/lib/toolConfig";
 import { fmtSize, judgeOriginal, judgePhoto, judgeResult, type Check } from "@/lib/verdict";
 import { analysePhoto, frameFace, whiten, type PhotoAnalysis } from "@/lib/vision";
+import { consumeShared, isPdf, sharedFiles } from "@/lib/shared";
 import type { Strings } from "@/lib/i18n";
 import { useStrings } from "@/components/LangProvider";
 
@@ -41,6 +42,9 @@ type Props = {
   /** Told about each finished file (and null when the image is cleared), so
    *  an exam page can bundle every upload into one ZIP. */
   onFile?: (file: { name: string; blob: Blob } | null) => void;
+  /** Take a file shared into the app (/open → `?shared=1`). An exam page
+   *  turns this off for every upload but the one the file was shared for. */
+  shared?: boolean;
 };
 
 type Loaded = { file: File; source: Source; facts: FileFacts; id: number };
@@ -53,7 +57,7 @@ let nextId = 1;
  * shown on the right is that file — its real bytes, pixels and DPI — not an
  * estimate.
  */
-export default function PrecisionTool({ initial, editable = false, allowAuto = false, presets, what = "image", tip, onFile }: Props) {
+export default function PrecisionTool({ initial, editable = false, allowAuto = false, presets, what = "image", tip, onFile, shared = true }: Props) {
   const s = useStrings();
   const [cfg, setCfg] = useState<ToolConfig>(initial);
   const [loaded, setLoaded] = useState<Loaded | null>(null);
@@ -160,6 +164,26 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
     }
   };
 
+  // A file shared from another app: open it as if it had been dropped here.
+  const takeRef = useRef(take);
+  useEffect(() => {
+    takeRef.current = take;
+  });
+  useEffect(() => {
+    const incoming = shared ? sharedFiles() : null;
+    if (!incoming) return;
+    let cancelled = false;
+    incoming.then((files) => {
+      if (cancelled) return;
+      const f = files.find((x) => !isPdf(x));
+      if (f) takeRef.current(f);
+      consumeShared();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [shared]);
+
   const update = (patch: Partial<ToolConfig>) => {
     setCfg((c) => ({ ...c, ...patch }));
     if ("width" in patch || "height" in patch || "fit" in patch || "sizeMode" in patch) setFraming(CENTRED);
@@ -185,7 +209,15 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
       {/* Left: the image and its framing */}
       <div className="flex min-w-0 flex-col gap-4">
         {!working ? (
-          <DropZone onFile={take} what={s.what[what]} />
+          <DropZone
+            onFile={take}
+            what={s.what[what]}
+            camera={
+              cfg.photo
+                ? { facing: "user", aspect: cfg.width / cfg.height, guide: cfg.guide }
+                : { facing: "environment", aspect: cfg.sizeMode === "exact" ? cfg.width / cfg.height : 3 / 4 }
+            }
+          />
         ) : (
           <>
             {problem ? (

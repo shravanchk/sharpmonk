@@ -3,6 +3,8 @@
 //   src/app/apple-icon-source.svg          — full-bleed square (iOS rounds it)
 //   src/app/apple-icon.png (180)           — from the square
 //   public/icon-192.png, public/icon-512.png — PWA icons, from the badge
+//   public/icon-maskable-192.png, -512.png  — Android adaptive icons (app,
+//                                             Play Store), art in the safe zone
 //   src/app/favicon.ico (16, 32, 48)       — PNG-in-ICO, from the badge
 //
 // Run after editing src/lib/logo.ts:  node scripts/build-logo.mjs
@@ -27,6 +29,9 @@ const png = (svg, size) =>
 writeFileSync("src/app/apple-icon.png", await png(square, 180));
 writeFileSync("public/icon-192.png", await png(badge, 192));
 writeFileSync("public/icon-512.png", await png(badge, 512));
+const maskable = logoSvg("maskable");
+writeFileSync("public/icon-maskable-192.png", await png(maskable, 192));
+writeFileSync("public/icon-maskable-512.png", await png(maskable, 512));
 
 // ICO container holding PNG images (supported by every current browser).
 const sizes = [16, 32, 48];

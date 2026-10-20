@@ -46,6 +46,8 @@ const COLOR: Record<IconName, string> = {
   x: "rose",
   sparkle: "violet",
   "eye-off": "green",
+  camera: "blue",
+  smartphone: "blue",
 };
 
 type Props = {

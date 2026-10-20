@@ -58,7 +58,11 @@ export const LOGO_INNER = `<rect x="2" y="2" width="96" height="96" rx="24" fill
 /** Full-bleed variant for app icons, where the OS applies its own mask. */
 export const LOGO_INNER_SQUARE = `<rect width="100" height="100" fill="${LOGO_COLORS.plate}"/>${LOGO_ART}`;
 
-export function logoSvg(variant: "badge" | "square" = "badge"): string {
-  const inner = variant === "square" ? LOGO_INNER_SQUARE : LOGO_INNER;
+/** Android "maskable" icon: the launcher may crop to any shape inside the
+ *  central 80% circle, so the art shrinks into that safe zone. */
+export const LOGO_INNER_MASKABLE = `<rect width="100" height="100" fill="${LOGO_COLORS.plate}"/><g transform="translate(50 50) scale(0.7) translate(-50 -51)">${LOGO_ART}</g>`;
+
+export function logoSvg(variant: "badge" | "square" | "maskable" = "badge"): string {
+  const inner = variant === "square" ? LOGO_INNER_SQUARE : variant === "maskable" ? LOGO_INNER_MASKABLE : LOGO_INNER;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Sharpmonk">${inner}</svg>`;
 }

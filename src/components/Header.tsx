@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
+import InstallApp from "./InstallApp";
 import MonkMark from "./MonkMark";
 import Icon, { type IconName } from "./Icon";
-import { STRINGS, basePath, hasHindi, langFromPath, localHref, type Lang } from "@/lib/i18n";
+import { LANG_KEY, STRINGS, basePath, hasHindi, langFromPath, localHref, type Lang } from "@/lib/i18n";
 
 type NavLink = { href: string; label: string; icon: IconName; hint: string };
 
@@ -51,6 +52,18 @@ export default function Header() {
     setPrevPathname(pathname);
     setOpen(false);
   }
+
+  // Remembered so a share from another app, which always lands on
+  // /open?shared=1, carries on in this language (see OpenShared). That
+  // arrival itself isn't a choice of language, so it doesn't count.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has("shared")) return;
+    try {
+      localStorage.setItem(LANG_KEY, lang);
+    } catch {
+      // Storage blocked: shares open in English.
+    }
+  }, [lang, pathname]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -223,7 +236,8 @@ export default function Header() {
               })}
             </nav>
 
-            <div className="mt-3 border-t border-[var(--line)] pt-3">
+            <div className="mt-3 flex flex-col gap-2 border-t border-[var(--line)] pt-3">
+              <InstallApp lang={lang} variant="row" />
               <Link
                 href={localHref(lang, "/exams")}
                 className="btn-glow flex min-h-12 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold"
