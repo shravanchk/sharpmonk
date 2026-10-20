@@ -3,15 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/copy-pdf-worker.mjs",
+    "predev": "node scripts/copy-vendor.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/copy-pdf-worker.mjs",
+    "prebuild": "node scripts/copy-vendor.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "deploy": "npm run build && wrangler pages deploy out --project-name=sharpmonk --branch=main"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "1.0.1",
     "fflate": "0.7.5",
     "next": "16.3.8",
     "pdf-lib": "1.17.1",

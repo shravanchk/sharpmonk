@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { cropRect, paint, settleFraming, type Fit, type Framing, type Source } from "@/lib/imageEngine";
+import { GUIDES, cropRect, paint, settleFraming, type Fit, type Framing, type Guide, type Source } from "@/lib/imageEngine";
 import { useStrings } from "@/components/LangProvider";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
   fit: Fit;
   framing: Framing;
   onFraming: (f: Framing) => void;
-  guide?: "passport" | "face80";
+  guide?: Guide;
 };
 
 const MAX_H = 380;
@@ -101,11 +101,7 @@ export default function CropFrame({ source, aspect, fit, framing, onFraming, gui
       <canvas ref={canvas} className="block size-full" />
       {guide && (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 size-full" aria-hidden>
-          {guide === "passport" ? (
-            <ellipse cx="50" cy="44" rx="29" ry="33" fill="none" stroke="#2f6fed" strokeWidth="0.8" strokeDasharray="3 2" vectorEffect="non-scaling-stroke" />
-          ) : (
-            <ellipse cx="50" cy="47" rx="40" ry="42" fill="none" stroke="#2f6fed" strokeWidth="0.8" strokeDasharray="3 2" vectorEffect="non-scaling-stroke" />
-          )}
+          <ellipse {...GUIDES[guide]} fill="none" stroke="#2f6fed" strokeWidth="0.8" strokeDasharray="3 2" vectorEffect="non-scaling-stroke" />
         </svg>
       )}
     </div>

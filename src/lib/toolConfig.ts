@@ -1,5 +1,5 @@
-import type { Fit } from "./imageEngine";
-import type { DocSpec } from "./specs";
+import type { Fit, Guide } from "./imageEngine";
+import type { DocSpec, PhotoRules } from "./specs";
 
 /**
  * What one tool instance is set to produce. Exam pages build this from a
@@ -20,7 +20,11 @@ export type ToolConfig = {
   dpi?: number;
   fit: Fit;
   cleanInk: boolean;
-  guide?: "passport" | "face80";
+  guide?: Guide;
+  /** Set for a photo of the candidate: turns on the photo checks. */
+  photo?: PhotoRules;
+  /** Replace the background with white (photos only). */
+  whiteBg?: boolean;
   fileName: string;
 };
 
@@ -37,6 +41,8 @@ export function configFromDoc(doc: DocSpec): ToolConfig {
     fit: doc.fit,
     cleanInk: doc.cleanInk,
     guide: doc.guide,
+    photo: doc.photo,
+    whiteBg: false,
     fileName: doc.fileName,
   };
 }

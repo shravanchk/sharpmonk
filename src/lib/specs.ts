@@ -13,7 +13,7 @@
  * sensible output size instead of inventing a requirement.
  */
 
-import type { Fit } from "./imageEngine";
+import type { Fit, Guide } from "./imageEngine";
 
 export type DocKind = "photo" | "signature" | "thumb" | "declaration" | "impressions";
 
@@ -39,12 +39,24 @@ export type DocSpec = {
   /** Default for the paper-to-white cleanup (signatures and ink scans). */
   cleanInk: boolean;
   /** Overlay drawn on the crop frame. */
-  guide?: "passport" | "face80";
+  guide?: Guide;
+  /** For the candidate's photo: what the on-device photo checks hold it to. */
+  photo?: PhotoRules;
   /** The notification's own rules, in plain words. */
   rules: string[];
   /** Our notes — where the notification is silent or contradicts itself. */
   notes?: string[];
   fileName: string;
+};
+
+/** The parts of a photo rule that can be measured from the image. Only what
+ *  the notification states goes here. */
+export type PhotoRules = {
+  /** Share of the photo's height the face must fill, e.g. 0.8 for "80% of
+   *  the image should be your face". Measured top of the head to the chin. */
+  faceShare?: number;
+  /** "white", or "light" where the notification allows any light colour. */
+  background: "white" | "light";
 };
 
 export type ExamSpec = {
@@ -91,6 +103,7 @@ function bankDocs(o: { thumbFallback: string; declaration: string }): DocSpec[] 
       fit: "cover",
       cleanInk: false,
       guide: "passport",
+      photo: { background: "light" },
       rules: [
         "Recent passport-style colour photograph.",
         "Light-coloured, preferably white, background.",
@@ -192,6 +205,7 @@ export const EXAMS: ExamSpec[] = [
         fit: "cover",
         cleanInk: false,
         guide: "passport",
+        photo: { background: "light" },
         rules: [
           "Recent passport-style colour photograph.",
           "Light-coloured, preferably white, background.",
@@ -314,6 +328,7 @@ export const EXAMS: ExamSpec[] = [
         fit: "cover",
         cleanInk: false,
         guide: "face80",
+        photo: { faceShare: 0.8, background: "white" },
         rules: [
           "Recent passport-size photograph, in colour or black & white.",
           "80% of the image should be your face, without a mask, with ears visible.",
@@ -322,6 +337,7 @@ export const EXAMS: ExamSpec[] = [
         ],
         notes: [
           "The bulletin sets no pixel dimensions. Sharpmonk produces 350 × 450 px — the 3.5 × 4.5 cm passport proportion — which is comfortably sharp and well inside the size window.",
+          "The bulletin doesn't say where the face starts and ends. Sharpmonk's photo check measures from the top of the head to the chin and wants that to fill at least 80% of the photo's height; “Frame my face” sets it to about 84%.",
         ],
         fileName: "photo",
       },
@@ -411,6 +427,7 @@ export const EXAMS: ExamSpec[] = [
         fit: "cover",
         cleanInk: false,
         guide: "face80",
+        photo: { faceShare: 0.8, background: "white" },
         rules: [
           "Recent passport-size photograph in colour.",
           "80% of the image should be your face, without a mask, with ears visible.",
@@ -420,6 +437,7 @@ export const EXAMS: ExamSpec[] = [
         notes: [
           "Unlike NEET, JEE Main asks for colour — a black & white photo doesn't meet the bulletin.",
           "No pixel dimensions are set; Sharpmonk produces 350 × 450 px, the 3.5 × 4.5 cm passport proportion.",
+          "The bulletin doesn't say where the face starts and ends. Sharpmonk's photo check measures from the top of the head to the chin and wants that to fill at least 80% of the photo's height; “Frame my face” sets it to about 84%.",
         ],
         fileName: "photo",
       },
@@ -484,6 +502,7 @@ export const EXAMS: ExamSpec[] = [
         fit: "cover",
         cleanInk: false,
         guide: "face80",
+        photo: { faceShare: 0.75, background: "white" },
         rules: [
           "Recent colour photograph, JPG, between 20 KB and 200 KB, saved with the file name ‘photo’.",
           "Your face covers at least three-quarters (75%) of the photo, looking straight at the camera, head in the centre and both ears visible.",
@@ -493,6 +512,7 @@ export const EXAMS: ExamSpec[] = [
         ],
         notes: [
           "The instructions set no pixel dimensions. Sharpmonk produces 350 × 450 px, the 3.5 × 4.5 cm passport proportion; crop close so your face fills the guide.",
+          "Sharpmonk's photo check measures the face from the top of the head to the chin and wants it to fill at least 75% of the photo's height; “Frame my face” sets it to about 84%.",
         ],
         fileName: "photo",
       },

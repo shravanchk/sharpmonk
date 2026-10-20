@@ -9,6 +9,7 @@ import { RangeField, ToggleField } from "./Fields";
 import {
   CENTRED,
   DecodeError,
+  cropRect,
   decodeFile,
   inspect,
   produce,
@@ -19,7 +20,8 @@ import {
   type Source,
 } from "@/lib/imageEngine";
 import { LIMITS, type ToolConfig } from "@/lib/toolConfig";
-import { fmtSize, judgeOriginal, judgeResult, type Check } from "@/lib/verdict";
+import { fmtSize, judgeOriginal, judgePhoto, judgeResult, type Check } from "@/lib/verdict";
+import { analysePhoto, frameFace, whiten, type PhotoAnalysis } from "@/lib/vision";
 import type { Strings } from "@/lib/i18n";
 import { useStrings } from "@/components/LangProvider";
 
@@ -69,19 +71,58 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
 
   const working = useMemo(() => (loaded ? rotate(loaded.source, turns) : null), [loaded, turns]);
 
+  // Photo of the candidate: find the face and the background once per image
+  // and rotation. Read cfg through a ref so toggling the background doesn't
+  // analyse again.
+  const cfgRef = useRef(cfg);
+  useEffect(() => {
+    cfgRef.current = cfg;
+  }, [cfg]);
+  const visionKey = loaded && cfg.photo ? `${loaded.id}:${turns}` : "";
+  const [vision, setVision] = useState<{ key: string; a: PhotoAnalysis | null } | null>(null);
+  useEffect(() => {
+    if (!working || !visionKey) return;
+    let cancelled = false;
+    analysePhoto(working).then(
+      (a) => {
+        if (cancelled) return;
+        setVision({ key: visionKey, a });
+        // Frame the face straight away, unless the reader already has.
+        const c = cfgRef.current;
+        setFraming((f) =>
+          f === CENTRED && c.guide ? frameFace(a, working.width, working.height, c.width / c.height, c.fit, c.guide) : f,
+        );
+      },
+      () => !cancelled && setVision({ key: visionKey, a: null }),
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [working, visionKey]);
+  const analysed = vision && vision.key === visionKey ? vision : null;
+  const analysis = analysed?.a ?? null;
+
+  const whitened = useMemo(
+    () => (working && analysis && cfg.whiteBg ? whiten(working, analysis) : null),
+    [working, analysis, cfg.whiteBg],
+  );
+  // What gets framed and encoded. Framing is in fractions of the image, so it
+  // carries over between the photo and its whitened copy.
+  const shown = whitened ?? working;
+
   const problem = validate(cfg, s);
-  const key = loaded && !problem ? JSON.stringify([loaded.id, turns, framing, cfg]) : "";
+  const key = loaded && !problem ? JSON.stringify([loaded.id, turns, framing, cfg, !!whitened]) : "";
   const busy = !!key && result?.key !== key;
   const current = result && result.key === key ? result : null;
 
   useEffect(() => {
-    if (!working || !key) return;
+    if (!shown || !key) return;
     let cancelled = false;
     const t = setTimeout(
       async () => {
         let res: EncodeResult;
         try {
-          res = await produce(working, cfg, framing);
+          res = await produce(shown, cfg, framing);
         } catch (e) {
           res = { ok: false, reason: e instanceof Error ? e.message : String(e), smallestBytes: 0 };
         }
@@ -98,7 +139,7 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
       cancelled = true;
       clearTimeout(t);
     };
-  }, [working, key, cfg, framing]);
+  }, [shown, key, cfg, framing]);
 
   // Release the decoded image and the last object URL when we're done.
   useEffect(() => () => loaded?.source.release(), [loaded]);
@@ -129,6 +170,16 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
   const aspect = cfg.sizeMode === "exact" ? cfg.width / cfg.height : working ? working.width / working.height : 1;
   const ok = current?.res.ok ? current.res : null;
 
+  const frameMyFace = () => {
+    if (working && analysis && cfg.guide) setFraming(frameFace(analysis, working.width, working.height, aspect, cfg.fit, cfg.guide));
+  };
+  const photoChecks = (() => {
+    if (!working || !analysis || !cfg.photo || problem) return null;
+    const r = cropRect(working.width, working.height, aspect, cfg.fit, framing);
+    const crop = { x: r.x / working.width, y: r.y / working.height, w: r.w / working.width, h: r.h / working.height };
+    return judgePhoto(analysis, crop, cfg.photo, !!whitened, s);
+  })();
+
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
       {/* Left: the image and its framing */}
@@ -143,7 +194,7 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
               </div>
             ) : (
               <CropFrame
-                source={working}
+                source={shown ?? working}
                 aspect={aspect}
                 fit={cfg.sizeMode === "exact" ? cfg.fit : "cover"}
                 framing={framing}
@@ -185,12 +236,21 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
               </button>
             </div>
 
-            <ToggleField
-              label={s.tool.clean}
-              description={s.tool.cleanDesc}
-              checked={cfg.cleanInk}
-              onChange={(cleanInk) => update({ cleanInk })}
-            />
+            {cfg.photo ? (
+              <ToggleField
+                label={s.photo.white}
+                description={cfg.whiteBg && !analysed ? s.photo.whiteWait : s.photo.whiteDesc}
+                checked={!!cfg.whiteBg}
+                onChange={(whiteBg) => update({ whiteBg })}
+              />
+            ) : (
+              <ToggleField
+                label={s.tool.clean}
+                description={s.tool.cleanDesc}
+                checked={cfg.cleanInk}
+                onChange={(cleanInk) => update({ cleanInk })}
+              />
+            )}
             {tip}
           </>
         )}
@@ -256,6 +316,31 @@ export default function PrecisionTool({ initial, editable = false, allowAuto = f
             </div>
           )}
         </section>
+
+        {loaded && cfg.photo && (
+          <section aria-live="polite" className="rounded-2xl border border-[var(--line)] p-5">
+            <h3 className="text-muted font-mono text-xs tracking-[0.14em] uppercase">{s.photo.title}</h3>
+            {!analysed && <p className="text-muted mt-3 text-sm">{s.photo.checking}</p>}
+            {analysed && !analysis && <p className="text-muted mt-3 text-sm">{s.photo.unavailable}</p>}
+            {photoChecks && (
+              <>
+                <div className="mt-3">
+                  <CheckList checks={photoChecks} />
+                </div>
+                {analysis?.faces === 1 && cfg.guide && (
+                  <button
+                    type="button"
+                    onClick={frameMyFace}
+                    className="btn-ghost mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm"
+                  >
+                    <Icon name="crop" size={16} /> {s.photo.frame}
+                  </button>
+                )}
+                <p className="text-muted mt-3 text-xs leading-relaxed">{s.photo.measured}</p>
+              </>
+            )}
+          </section>
+        )}
 
         {loaded && (
           <section className="rounded-2xl border border-[var(--line)] p-5">

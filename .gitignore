@@ -44,5 +44,5 @@ next-env.d.ts
 /out
 .wrangler
 
-# copied from pdfjs-dist by scripts/copy-pdf-worker.mjs
+# copied from node_modules and assets/ by scripts/copy-vendor.mjs
 /public/vendor/

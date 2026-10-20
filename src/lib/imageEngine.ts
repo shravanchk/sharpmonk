@@ -105,6 +105,16 @@ export type Framing = { zoom: number; cx: number; cy: number };
 
 export const CENTRED: Framing = { zoom: 1, cx: 0.5, cy: 0.5 };
 
+/** The dashed oval drawn over a photo crop, in percent of the frame — where
+ *  the head goes, top of the hair to the chin. "Frame my face" aims for it.
+ *  face80 is sized for the notifications that want the face to fill 75–80%
+ *  of the photo. */
+export type Guide = "passport" | "face80";
+export const GUIDES: Record<Guide, { cx: number; cy: number; rx: number; ry: number }> = {
+  passport: { cx: 50, cy: 44, rx: 29, ry: 33 },
+  face80: { cx: 50, cy: 47, rx: 40, ry: 42 },
+};
+
 export type Rect = { x: number; y: number; w: number; h: number };
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));

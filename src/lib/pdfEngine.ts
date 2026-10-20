@@ -38,7 +38,7 @@ let pdfjs: Promise<typeof import("pdfjs-dist")> | null = null;
 function loadPdfjs() {
   if (!pdfjs) {
     pdfjs = import("pdfjs-dist").then((m) => {
-      // Copied into public/ at build time by scripts/copy-pdf-worker.mjs.
+      // Copied into public/ at build time by scripts/copy-vendor.mjs.
       m.GlobalWorkerOptions.workerSrc = "/vendor/pdf.worker.min.mjs";
       return m;
     });
